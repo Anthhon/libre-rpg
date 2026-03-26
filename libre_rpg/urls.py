@@ -19,11 +19,25 @@ from django.urls import path
 from django.shortcuts import render
 
 
-def dashboard_view(request):
+def configurations_render(request):
+    return render(request, "configurations.html")
+
+
+def chat_render(request):
+    return render(request, "chat.html")
+
+
+def dashboard_render(request):
     return render(request, "dashboard.html")
+
+
+def login_render(request):
+    return render(request, "welcome.html")
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', dashboard_view, name='dashboard'),
+    path('', login_render, name='login'),
+    path('chat/', chat_render, name='chat'),
+    path('config/', configurations_render, name='configurations'),
 ]

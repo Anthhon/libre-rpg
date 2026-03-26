@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+{# ═══════════════ CONFIGURATIONS ═══════════════ #}
+<div class="panel active" id="panel-config">
+    <div class="config-panel">
+        <div class="panel-title">Configurações</div>
+        <div class="panel-subtitle">Personalize sua experiência na mesa</div>
+
+        {# Appearence options #}
+        <div class="config-section">
+            <div class="config-section-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-arcane)">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M20.188 10.934l-1.383-.8a6.952 6.952 0 000-4.268l1.383-.8A1 1 0 0021 4.2V3.8a1 1 0 00-1.5-.866L18.117 3.8A7 7 0 0012 1a7 7 0 00-6.117 2.8L4.5 2.934A1 1 0 003 3.8v.4a1 1 0 00.812.981l1.383.8a6.952 6.952 0 000 4.268l-1.383.8A1 1 0 003 12v.4a1 1 0 00.812.981l1.383.8A7 7 0 0012 23a7 7 0 006.117-9.8l1.383-.8A1 1 0 0021 11.6v-.4a1 1 0 00-.812-.981z"/>
+                </svg>
+                <span class="config-section-title">Aparência</span>
+            </div>
+
+            <div class="config-row">
+                <div class="config-info">
+                    <div class="config-label">Tema</div>
+                    <div class="config-desc">Esquema de cores da interface</div>
+                </div>
+                <div class="theme-options">
+                    <div class="theme-opt theme-dark active" title="Escuro" onclick="setTheme('dark', this)"></div>
+                    <div class="theme-opt theme-light" title="Claro" onclick="setTheme('light', this)"></div>
+                    <div class="theme-opt theme-blood" title="Sangue" onclick="setTheme('blood', this)"></div>
+                </div>
+            </div>
+
+            <div class="config-row">
+                <div class="config-info">
+                    <div class="config-label">Cor de Destaque</div>
+                    <div class="config-desc">Tom primário da interface</div>
+                </div>
+                <div class="accent-options">
+                    <div class="accent-opt active" style="background:#c4a05c" title="Dourado"></div>
+                    <div class="accent-opt" style="background:#7c5cbf" title="Arcano"></div>
+                    <div class="accent-opt" style="background:#d4683a" title="Brasa"></div>
+                    <div class="accent-opt" style="background:#4a90a4" title="Gelo"></div>
+                    <div class="accent-opt" style="background:#4caf82" title="Esmeralda"></div>
+                </div>
+            </div>
+
+            <div class="config-row">
+                <div class="config-info">
+                    <div class="config-label">Tamanho da Fonte</div>
+                    <div class="config-desc">Tamanho do texto no chat</div>
+                </div>
+                <select class="config-select">
+                    <option>Pequeno</option>
+                    <option selected>Médio</option>
+                    <option>Grande</option>
+                </select>
+            </div>
+        </div>
+
+        {# Sessão #}
+        <div class="config-section">
+            <div class="config-section-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-gold)">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span class="config-section-title">Sessão</span>
+            </div>
+
+            <div class="config-row">
+                <div class="config-info">
+                    <div class="config-label">Notificações de Chat</div>
+                    <div class="config-desc">Alertas ao receber mensagens</div>
+                </div>
+                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+            </div>
+
+            <div class="config-row">
+                <div class="config-info">
+                    <div class="config-label">Som de Dados</div>
+                    <div class="config-desc">Efeito sonoro ao rolar dados</div>
+                </div>
+                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+            </div>
+
+            <div class="config-row">
+                <div class="config-info">
+                    <div class="config-label">Animações de Rolagem</div>
+                    <div class="config-desc">Animar os dados ao rolar</div>
+                </div>
+                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+            </div>
+
+            <div class="config-row">
+                <div class="config-info">
+                    <div class="config-label">Mostrar timestamps</div>
+                    <div class="config-desc">Exibir horário em cada mensagem</div>
+                </div>
+                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+            </div>
+        </div>
+
+        {# Conexão #}
+        <div class="config-section">
+            <div class="config-section-header">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-ice)">
+                    <path d="M1 6l10.5 6L22 6M1 6v12l10.5 6L22 18V6M1 6l10.5-6L22 6"/>
+                </svg>
+                <span class="config-section-title">Conexão</span>
+            </div>
+
+            <div class="config-row">
+                <div class="config-info">
+                    <div class="config-label">Endereço do Servidor</div>
+                    <div class="config-desc">IP do mestre para esta sessão</div>
+                </div>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent-ice);">192.168.1.42:8000</span>
+            </div>
+
+            <div class="config-row">
+                <div class="config-info">
+                    <div class="config-label">Túnel Público (Cloudflare)</div>
+                    <div class="config-desc">Acesso externo sem CGNAT</div>
+                </div>
+                <div class="toggle-switch" onclick="this.classList.toggle('on')"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

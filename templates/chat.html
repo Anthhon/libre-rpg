@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+{# ═══════════════ CHAT ═══════════════ #}
+<div class="chat-panel active">
+    <div class="chat-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-gold)">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+        <span class="chat-header-title">Chat da Mesa</span>
+        <div class="online-count">
+            <div class="online-dot"></div>
+            [[QTD. USUÁRIOS ONLINE]] online
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+        {# Examples to each message type possible #}
+
+        <div class="msg msg-system">
+            <div class="msg-body">— [[HORÁRIO DE INÍCIO DA ÚLTIMA SESSÃO]] —</div>
+        </div>
+
+        <div class="msg">
+            <div class="msg-header">
+                {# TODO: Create random message color system to each user in chat #}
+                <span class="msg-author c-ember">[[USERNAME]]</span>
+                <span class="msg-time">[[MESSAGE TIME]]</span>
+            </div>
+            <div class="msg-body">[[MESSAGE TEXT CONTENT]]</div>
+        </div>
+
+        <div class="msg msg-roll">
+            <div class="msg-header">
+                <span class="msg-author c-arcane">[[USERNAME]]</span>
+                <span class="msg-time">[[MESSAGE TIME]]</span>
+                <span style="margin-left:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent-gold); background:rgba(196,160,92,0.1); border:1px solid rgba(196,160,92,0.2); padding:1px 6px; border-radius:4px;">🎲 rolou dados</span>
+            </div>
+            <div class="roll-display">
+                {# N = Number of times dice has been rolled #}
+                {# X = Dice value #}
+                {# Y = Added value at end of roll #}
+                <span class="roll-notation">NdX+Y</span>
+                <span class="roll-arrow">→</span>
+                <div class="roll-dice">
+                    
+                    {# DICE ROLL TOTAL#}
+                    <div class="die max">17</div> {# Add 'max' in class to represent a critical roll#}
+                </div>
+                <span style="color:var(--text-muted); font-size:13px;">+5</span>
+                    {# DICE ROLL TOTAL WITH EXTRA SUM #}
+                <span class="roll-total">22</span>
+                <span class="roll-label">[[ROLL LABEL/TYPE]]</span>
+            </div>
+        </div>
+
+        <div class="msg msg-roll">
+            <div class="msg-header">
+                <span class="msg-author c-ember">[[USERNAME]]</span>
+                <span class="msg-time">[[MESSAGE TIME]]</span>
+                <span style="margin-left:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent-ember); background:rgba(212,104,58,0.1); border:1px solid rgba(212,104,58,0.2); padding:1px 6px; border-radius:4px;">🎲 rolou secretamente</span>
+            </div>
+            <div class="roll-display">
+                <span class="roll-notation" style="color:var(--accent-ember)">??? — Rolagem oculta</span>
+            </div>
+        </div>
+
+    </div>
+
+    {# ═══════════════ FAST ROLL OPTIONS ═══════════════ #}
+    <div class="chat-input-area">
+        <div class="dice-quick">
+            <span class="dice-chip" onclick="rollDice('d4')">d4</span>
+            <span class="dice-chip" onclick="rollDice('d6')">d6</span>
+            <span class="dice-chip" onclick="rollDice('d8')">d8</span>
+            <span class="dice-chip" onclick="rollDice('d10')">d10</span>
+            <span class="dice-chip" onclick="rollDice('d12')">d12</span>
+            <span class="dice-chip" onclick="rollDice('d20')">d20</span>
+            <span class="dice-chip" onclick="rollDice('d100')">d100</span>
+        </div>
+        <div class="chat-input-row">
+            <textarea class="chat-input" rows="1" placeholder="Descreva sua ação ou escreva... (Enter para enviar)" id="chat-input" onkeydown="handleKey(event)"></textarea>
+            <button class="send-btn" onclick="sendMessage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

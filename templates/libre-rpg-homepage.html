@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Libre RPG — Mesa Virtual</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+
+        <style>
+/* ═══════════════════════════════════════
+   TOKENS & THEMES
+       ═══════════════════════════════════════ */
+:root {
+    --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+    [data-theme="dark"] {
+        --bg-void:      #080a0f;
+        --bg-deep:      #0d1117;
+        --bg-surface:   #111722;
+        --bg-raised:    #18202e;
+        --bg-float:     #1e2840;
+        --border:       rgba(255,255,255,0.07);
+        --border-glow:  rgba(196,160,92,0.35);
+        --text-primary: #e8e0d0;
+        --text-secondary:#9a9080;
+        --text-muted:   #5a5248;
+        --accent-gold:  #c4a05c;
+        --accent-ember: #d4683a;
+        --accent-arcane:#7c5cbf;
+        --accent-ice:   #4a90a4;
+        --glow-gold:    rgba(196,160,92,0.15);
+        --glow-ember:   rgba(212,104,58,0.12);
+        --sidebar-w:    260px;
+    }
+
+    [data-theme="light"] {
+        --bg-void:      #f0ebe0;
+        --bg-deep:      #f7f3eb;
+        --bg-surface:   #faf7f2;
+        --bg-raised:    #ffffff;
+        --bg-float:     #f0ead8;
+        --border:       rgba(0,0,0,0.08);
+        --border-glow:  rgba(140,95,30,0.3);
+        --text-primary: #2a2018;
+        --text-secondary:#6b5d4a;
+        --text-muted:   #b0a090;
+        --accent-gold:  #8c5f1e;
+        --accent-ember: #b84a20;
+        --accent-arcane:#5a3d9a;
+        --accent-ice:   #2a6a80;
+        --glow-gold:    rgba(140,95,30,0.08);
+        --glow-ember:   rgba(184,74,32,0.08);
+        --sidebar-w:    260px;
+    }
+
+    /* ═══════════════════════════════════════
+       RESET & BASE
+           ═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 17px;
+    background: var(--bg-void);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    overflow: hidden;
+    transition: background var(--transition), color var(--transition);
+}
+
+    /* ═══════════════════════════════════════
+       NOISE TEXTURE OVERLAY
+           ═══════════════════════════════════════ */
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.5;
+    }
+
+    /* ═══════════════════════════════════════
+       SIDEBAR
+           ═══════════════════════════════════════ */
+    .sidebar {
+        width: var(--sidebar-w);
+        min-height: 100vh;
+        background: var(--bg-deep);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        flex-shrink: 0;
+        transition: width var(--transition), opacity var(--transition);
+        overflow: hidden;
+        z-index: 100;
+    }
+
+    .sidebar.collapsed {
+        width: 0;
+        border-right-color: transparent;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Ornamento superior */
+    .sidebar-header {
+        padding: 28px 24px 20px;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .sidebar-header::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 24px;
+        right: 24px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+    }
+
+    .logo {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        white-space: nowrap;
+    }
+
+    .logo span {
+        color: var(--text-muted);
+        font-weight: 400;
+    }
+
+    .campaign-name {
+        font-family: 'Cinzel', serif;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-top: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .campaign-sub {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 2px;
+        white-space: nowrap;
+        font-style: italic;
+    }
+
+    /* Sessão online pill */
+    .session-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: #4caf82;
+        background: rgba(76,175,130,0.1);
+        border: 1px solid rgba(76,175,130,0.2);
+        border-radius: 20px;
+        padding: 3px 10px;
+        margin-top: 10px;
+        letter-spacing: 0.08em;
+    }
+
+    .session-badge::before {
+        content: '';
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: #4caf82;
+        box-shadow: 0 0 6px #4caf82;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+
+    /* Nav */
+    .sidebar-nav {
+        flex: 1;
+        padding: 16px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .nav-section-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        padding: 12px 12px 6px;
+        white-space: nowrap;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        text-decoration: none;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-item::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--glow-gold);
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .nav-item:hover::before { opacity: 1; }
+    .nav-item:hover {
+        color: var(--text-primary);
+        border-color: var(--border);
+    }
+
+    .nav-item.active {
+        background: var(--bg-raised);
+        border-color: var(--border-glow);
+        color: var(--accent-gold);
+    }
+
+    .nav-item.active::after {
+        content: '';
+        position: absolute;
+        left: 0; top: 20%; bottom: 20%;
+        width: 2px;
+        background: var(--accent-gold);
+        border-radius: 0 2px 2px 0;
+        box-shadow: 0 0 8px var(--accent-gold);
+    }
+
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        opacity: 0.8;
+    }
+
+    .nav-label {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+    }
+
+    .nav-badge {
+        margin-left: auto;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        background: var(--accent-ember);
+        color: #fff;
+        border-radius: 10px;
+        padding: 2px 7px;
+    }
+
+    /* Sidebar Footer */
+    .sidebar-footer {
+        padding: 16px 12px;
+        border-top: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+
+    .player-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        white-space: nowrap;
+    }
+
+    .avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-arcane), var(--accent-gold));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+        border: 2px solid var(--border-glow);
+    }
+
+    .player-info { overflow: hidden; }
+
+    .player-name {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-primary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .player-role {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    /* ═══════════════════════════════════════
+       MAIN CONTENT
+           ═══════════════════════════════════════ */
+    .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        background: var(--bg-void);
+    }
+
+    /* Topbar */
+    .topbar {
+        height: 56px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-deep);
+        gap: 16px;
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    .topbar::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, var(--accent-gold), transparent 40%);
+        opacity: 0.4;
+    }
+
+    .toggle-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: all 0.2s;
+        color: var(--text-secondary);
+    }
+
+    .toggle-btn:hover {
+        border-color: var(--border-glow);
+        color: var(--accent-gold);
+        background: var(--bg-raised);
+    }
+
+    .topbar-title {
+        font-family: 'Cinzel', serif;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        color: var(--text-primary);
+    }
+
+    .topbar-breadcrumb {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-left: 4px;
+    }
+
+    .topbar-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: transparent;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+        border-color: var(--border-glow);
+        color: var(--accent-gold);
+        background: var(--bg-raised);
+    }
+
+    /* ═══════════════════════════════════════
+       CONTENT PANELS
+           ═══════════════════════════════════════ */
+    .content {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .panel {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(8px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .panel.active {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+    }
+
+    /* ═══════════════════════════════════════
+PANEL: MESA
+    ═══════════════════════════════════════ */
+    .mesa-layout {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        grid-template-rows: 1fr;
+        height: 100%;
+        gap: 0;
+    }
+
+    /* Mapa placeholder */
+    .map-area {
+        background: var(--bg-deep);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .map-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.6;
+    }
+
+    .map-placeholder {
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .map-placeholder-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        filter: grayscale(0.3);
+    }
+
+    .map-placeholder h3 {
+        font-family: 'Cinzel', serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        letter-spacing: 0.1em;
+    }
+
+    .map-placeholder p {
+        color: var(--text-muted);
+        font-style: italic;
+        margin-top: 6px;
+        font-size: 14px;
+    }
+
+    .map-badge {
+        display: inline-block;
+        margin-top: 14px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: var(--accent-ember);
+        background: rgba(212,104,58,0.1);
+        border: 1px solid rgba(212,104,58,0.2);
+        padding: 4px 12px;
+        border-radius: 20px;
+    }
+
+    /* Chat Panel */
+    .chat-panel {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-surface);
+        height: 100%;
+    }
+
+    .chat-header {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .chat-header-title {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--text-primary);
+    }
+
+    .online-count {
+        margin-left: auto;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: #4caf82;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .online-dot {
+        width: 6px; height: 6px;
+        background: #4caf82;
+        border-radius: 50%;
+        box-shadow: 0 0 6px #4caf82;
+    }
+
+    /* Messages */
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+    }
+
+    .msg {
+        padding: 7px 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        line-height: 1.5;
+        transition: background 0.15s;
+    }
+
+    .msg:hover { background: var(--bg-raised); }
+
+    .msg-header {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 2px;
+    }
+
+    .msg-author {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+    }
+
+    .msg-time {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        color: var(--text-muted);
+    }
+
+    .msg-body {
+        color: var(--text-secondary);
+        line-height: 1.55;
+    }
+
+    /* Dice roll message */
+    .msg-roll {
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent-gold);
+        border-radius: 0 6px 6px 0;
+    }
+
+    .roll-display {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+    }
+
+    .roll-notation {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--text-muted);
+        background: var(--bg-surface);
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    .roll-arrow {
+        color: var(--text-muted);
+        font-size: 12px;
+    }
+
+    .roll-dice {
+        display: flex;
+        gap: 4px;
+    }
+
+    .die {
+        width: 26px;
+        height: 26px;
+        border-radius: 5px;
+        background: var(--bg-float);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .die.max {
+        background: rgba(196,160,92,0.15);
+        border-color: var(--accent-gold);
+        color: var(--accent-gold);
+        box-shadow: 0 0 8px rgba(196,160,92,0.2);
+    }
+
+    .die.min {
+        background: rgba(212,104,58,0.1);
+        border-color: var(--accent-ember);
+        color: var(--accent-ember);
+    }
+
+    .roll-total {
+        font-family: 'Cinzel', serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--accent-gold);
+        line-height: 1;
+    }
+
+    .roll-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    /* System message */
+    .msg-system {
+        text-align: center;
+        padding: 6px 0;
+    }
+
+    .msg-system .msg-body {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+    }
+
+    /* Author colors */
+    .c-gold   { color: var(--accent-gold); }
+    .c-ember  { color: var(--accent-ember); }
+    .c-arcane { color: var(--accent-arcane); }
+    .c-ice    { color: var(--accent-ice); }
+    .c-green  { color: #4caf82; }
+
+    /* Chat Input */
+    .chat-input-area {
+        padding: 12px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .dice-quick {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .dice-chip {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.15s;
+        letter-spacing: 0.05em;
+    }
+
+    .dice-chip:hover {
+        border-color: var(--border-glow);
+        color: var(--accent-gold);
+        background: var(--bg-float);
+    }
+
+    .chat-input-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .chat-input {
+        flex: 1;
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-family: 'Crimson Pro', serif;
+        font-size: 15px;
+        color: var(--text-primary);
+        outline: none;
+        transition: border-color 0.2s;
+        resize: none;
+    }
+
+    .chat-input:focus {
+        border-color: var(--border-glow);
+    }
+
+    .chat-input::placeholder { color: var(--text-muted); font-style: italic; }
+
+    .send-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: var(--accent-gold);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--bg-void);
+        flex-shrink: 0;
+        transition: all 0.2s;
+    }
+
+    .send-btn:hover {
+        background: #d4b070;
+        box-shadow: 0 0 16px rgba(196,160,92,0.4);
+    }
+
+    /* ═══════════════════════════════════════
+PANEL: FICHA
+    ═══════════════════════════════════════ */
+    .ficha-panel {
+        padding: 28px 32px;
+        max-width: 900px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .panel-title {
+        font-family: 'Cinzel', serif;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+    }
+
+    .panel-subtitle {
+        font-size: 15px;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-bottom: 28px;
+    }
+
+    .divider {
+        height: 1px;
+        background: linear-gradient(90deg, var(--accent-gold), transparent);
+        margin: 24px 0;
+        opacity: 0.3;
+    }
+
+    /* Character header card */
+    .char-hero {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .char-hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent-gold), var(--accent-arcane), transparent);
+    }
+
+    .char-avatar-lg {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-arcane), var(--accent-gold));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Cinzel', serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+        border: 3px solid var(--border-glow);
+        box-shadow: 0 0 24px var(--glow-gold);
+    }
+
+    .char-info { flex: 1; }
+
+    .char-name {
+        font-family: 'Cinzel', serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .char-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+    }
+
+    .tag.gold { border-color: rgba(196,160,92,0.4); color: var(--accent-gold); }
+    .tag.arcane { border-color: rgba(124,92,191,0.4); color: var(--accent-arcane); }
+
+    .char-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .stat-box {
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 6px;
+        text-align: center;
+    }
+
+    .stat-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 8px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+    }
+
+    .stat-val {
+        font-family: 'Cinzel', serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    .stat-mod {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--accent-gold);
+        margin-top: 2px;
+    }
+
+    /* PDF Section */
+    .pdf-section {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .pdf-toolbar {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bg-raised);
+    }
+
+    .pdf-toolbar-title {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        color: var(--text-secondary);
+    }
+
+    .pdf-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 14px;
+        border-radius: 7px;
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        text-decoration: none;
+    }
+
+    .btn-outline {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--border-glow);
+        color: var(--accent-gold);
+    }
+
+    .btn-primary {
+        background: var(--accent-gold);
+        color: var(--bg-void);
+        border-color: transparent;
+    }
+
+    .btn-primary:hover {
+        background: #d4b070;
+        box-shadow: 0 0 16px rgba(196,160,92,0.3);
+    }
+
+    .pdf-preview {
+        height: 480px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: repeating-linear-gradient(
+            45deg,
+            var(--bg-void),
+            var(--bg-void) 10px,
+            var(--bg-deep) 10px,
+            var(--bg-deep) 20px
+                );
+    }
+
+    .pdf-preview-inner {
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        width: 320px;
+        height: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .pdf-preview-inner .icon { font-size: 48px; }
+    .pdf-preview-inner p {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        color: var(--text-muted);
+        letter-spacing: 0.05em;
+    }
+
+    /* ═══════════════════════════════════════
+PANEL: CONFIGURAÇÕES
+    ═══════════════════════════════════════ */
+    .config-panel {
+        padding: 28px 32px;
+        max-width: 700px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .config-section {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .config-section-header {
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .config-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--text-primary);
+    }
+
+    .config-row {
+        display: flex;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        gap: 16px;
+    }
+
+    .config-row:last-child { border-bottom: none; }
+
+    .config-info { flex: 1; }
+
+    .config-label {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .config-desc {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-top: 2px;
+    }
+
+    /* Theme switcher */
+    .theme-options {
+        display: flex;
+        gap: 8px;
+    }
+
+    .theme-opt {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .theme-opt.active {
+        border-color: var(--accent-gold);
+        box-shadow: 0 0 12px rgba(196,160,92,0.4);
+    }
+
+    .theme-dark {
+        background: linear-gradient(135deg, #080a0f 50%, #1e2840 50%);
+    }
+
+    .theme-light {
+        background: linear-gradient(135deg, #faf7f2 50%, #e8dfc8 50%);
+    }
+
+    .theme-blood {
+        background: linear-gradient(135deg, #0f0808 50%, #2a0a0a 50%);
+    }
+
+    /* Toggle switch */
+    .toggle-switch {
+        width: 44px;
+        height: 24px;
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+
+    .toggle-switch.on {
+        background: var(--accent-gold);
+        border-color: var(--accent-gold);
+    }
+
+    .toggle-switch::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--text-muted);
+        transition: all 0.2s;
+    }
+
+    .toggle-switch.on::after {
+        background: var(--bg-void);
+        left: 23px;
+    }
+
+    /* Select */
+    .config-select {
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        color: var(--text-primary);
+        padding: 7px 12px;
+        border-radius: 7px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .config-select:focus { border-color: var(--border-glow); }
+
+    /* Color accent picker */
+    .accent-options {
+        display: flex;
+        gap: 8px;
+    }
+
+    .accent-opt {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .accent-opt.active {
+        border-color: var(--text-primary);
+        transform: scale(1.15);
+    }
+
+    /* ═══════════════════════════════════════
+       SCROLLBAR
+           ═══════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ═══════════════════════════════════════
+       ANIMATIONS
+           ═══════════════════════════════════════ */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel.active > * {
+        animation: fadeIn 0.4s ease both;
+    }
+
+    /* Roll animation */
+    @keyframes rollIn {
+        0%  { transform: rotate(-10deg) scale(0.8); opacity: 0; }
+        60% { transform: rotate(4deg) scale(1.05); }
+        100%{ transform: rotate(0) scale(1); opacity: 1; }
+    }
+
+    .die { animation: rollIn 0.4s ease both; }
+    .die:nth-child(2) { animation-delay: 0.05s; }
+    .die:nth-child(3) { animation-delay: 0.1s; }
+    .die:nth-child(4) { animation-delay: 0.15s; }
+        </style>
+    </head>
+    <body>
+
+        <!-- ═══════════════ SIDEBAR ═══════════════ -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">Libre<span> · </span>RPG</div>
+                <div class="campaign-name">A Queda dos Arcanistas</div>
+                <div class="campaign-sub">Capítulo III — A Cripta Esquecida</div>
+                <div class="session-badge">Sessão em andamento</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Navegação</div>
+
+                <div class="nav-item active" onclick="navigate('mesa', this)">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <path d="M3 9h18M9 21V9"/>
+                    </svg>
+                    <span class="nav-label">Mesa</span>
+                    <span class="nav-badge">3</span>
+                </div>
+
+                <div class="nav-item" onclick="navigate('ficha', this)">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span class="nav-label">Ficha</span>
+                </div>
+
+                <div class="nav-item" onclick="navigate('config', this)">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span class="nav-label">Configurações</span>
+                </div>
+
+                <div class="nav-section-label" style="margin-top:12px;">Sessão</div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                    </svg>
+                    <span class="nav-label">Jogadores</span>
+                    <span style="margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-muted);">4</span>
+                </div>
+
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span class="nav-label">Sobre</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="player-card">
+                    <div class="avatar">T</div>
+                    <div class="player-info">
+                        <div class="player-name">Theron Ashveil</div>
+                        <div class="player-role">Jogador · Mago</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ═══════════════ MAIN ═══════════════ -->
+        <div class="main">
+
+            <!-- Topbar -->
+            <div class="topbar">
+                <button class="toggle-btn" onclick="toggleSidebar()" title="Alternar barra lateral">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+
+                <span class="topbar-title" id="topbar-title">Mesa</span>
+                <span class="topbar-breadcrumb" id="topbar-breadcrumb">— A Cripta Esquecida</span>
+
+                <div class="topbar-actions">
+                    <button class="icon-btn" title="Notificações">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" title="Ajuda">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="content">
+
+                <!-- ── MESA ── -->
+                <div class="panel active" id="panel-mesa">
+                    <div class="mesa-layout">
+
+                        <!-- Mapa -->
+                        <div class="map-area">
+                            <div class="map-grid"></div>
+                            <div class="map-placeholder">
+                                <div class="map-placeholder-icon">🗺️</div>
+                                <h3>Mapa da Campanha</h3>
+                                <p>O mapa interativo será exibido aqui</p>
+                                <span class="map-badge">Em desenvolvimento</span>
+                            </div>
+                        </div>
+
+                        <!-- Chat -->
+                        <div class="chat-panel">
+                            <div class="chat-header">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-gold)">
+                                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                                </svg>
+                                <span class="chat-header-title">Chat da Mesa</span>
+                                <div class="online-count">
+                                    <div class="online-dot"></div>
+                                    4 online
+                                </div>
+                            </div>
+
+                            <div class="chat-messages" id="chat-messages">
+
+                                <div class="msg msg-system">
+                                    <div class="msg-body">— Sessão iniciada às 20:00 —</div>
+                                </div>
+
+                                <div class="msg">
+                                    <div class="msg-header">
+                                        <span class="msg-author c-ember">Mestre</span>
+                                        <span class="msg-time">20:02</span>
+                                    </div>
+                                    <div class="msg-body">Vocês adentram a cripta através de uma passagem oculta atrás de um dos sarcófagos. O ar é pesado, impregnado com o cheiro de pedra úmida e algo mais... arcano. Tochas apagadas se acendem sozinhas conforme avançam.</div>
+                                </div>
+
+                                <div class="msg">
+                                    <div class="msg-header">
+                                        <span class="msg-author c-arcane">Theron</span>
+                                        <span class="msg-time">20:04</span>
+                                    </div>
+                                    <div class="msg-body">Acendo meu Foco Arcano e verifico se há presença mágica no ambiente. Quero usar Detectar Magia.</div>
+                                </div>
+
+                                <div class="msg msg-roll">
+                                    <div class="msg-header">
+                                        <span class="msg-author c-arcane">Theron</span>
+                                        <span class="msg-time">20:04</span>
+                                        <span style="margin-left:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent-gold); background:rgba(196,160,92,0.1); border:1px solid rgba(196,160,92,0.2); padding:1px 6px; border-radius:4px;">🎲 rolou dados</span>
+                                    </div>
+                                    <div class="roll-display">
+                                        <span class="roll-notation">1d20+5</span>
+                                        <span class="roll-arrow">→</span>
+                                        <div class="roll-dice">
+                                            <div class="die max">17</div>
+                                        </div>
+                                        <span style="color:var(--text-muted); font-size:13px;">+5</span>
+                                        <span class="roll-total">22</span>
+                                        <span class="roll-label">Arcana</span>
+                                    </div>
+                                </div>
+
+                                <div class="msg">
+                                    <div class="msg-header">
+                                        <span class="msg-author c-ember">Mestre</span>
+                                        <span class="msg-time">20:05</span>
+                                    </div>
+                                    <div class="msg-body">Com um 22 em Arcana, Theron, você percebe que toda a câmara está imbuída com magia de Transmutação — algo foi aprisionado aqui. As paredes pulsam com uma energia fraca mas constante.</div>
+                                </div>
+
+                                <div class="msg">
+                                    <div class="msg-header">
+                                        <span class="msg-author c-gold">Lyra</span>
+                                        <span class="msg-time">20:06</span>
+                                    </div>
+                                    <div class="msg-body">Apronto meu arco e fico em posição de guarda enquanto Theron analisa o ambiente. "Cuidado com armadilhas no chão," sussurro.</div>
+                                </div>
+
+                                <div class="msg msg-roll">
+                                    <div class="msg-header">
+                                        <span class="msg-author c-gold">Lyra</span>
+                                        <span class="msg-time">20:07</span>
+                                        <span style="margin-left:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent-gold); background:rgba(196,160,92,0.1); border:1px solid rgba(196,160,92,0.2); padding:1px 6px; border-radius:4px;">🎲 rolou dados</span>
+                                    </div>
+                                    <div class="roll-display">
+                                        <span class="roll-notation">1d20+7</span>
+                                        <span class="roll-arrow">→</span>
+                                        <div class="roll-dice">
+                                            <div class="die">9</div>
+                                        </div>
+                                        <span style="color:var(--text-muted); font-size:13px;">+7</span>
+                                        <span class="roll-total">16</span>
+                                        <span class="roll-label">Percepção</span>
+                                    </div>
+                                </div>
+
+                                <div class="msg">
+                                    <div class="msg-header">
+                                        <span class="msg-author c-ice">Aldric</span>
+                                        <span class="msg-time">20:08</span>
+                                    </div>
+                                    <div class="msg-body">Vou à frente com meu escudo levantado. "Protejo o grupo enquanto exploram."</div>
+                                </div>
+
+                                <div class="msg msg-roll">
+                                    <div class="msg-header">
+                                        <span class="msg-author c-ember">Mestre</span>
+                                        <span class="msg-time">20:09</span>
+                                        <span style="margin-left:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent-ember); background:rgba(212,104,58,0.1); border:1px solid rgba(212,104,58,0.2); padding:1px 6px; border-radius:4px;">🎲 rolou secretamente</span>
+                                    </div>
+                                    <div class="roll-display">
+                                        <span class="roll-notation" style="color:var(--accent-ember)">??? — Rolagem oculta</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Rolagem rápida -->
+                            <div class="chat-input-area">
+                                <div class="dice-quick">
+                                    <span class="dice-chip" onclick="rollDice('d4')">d4</span>
+                                    <span class="dice-chip" onclick="rollDice('d6')">d6</span>
+                                    <span class="dice-chip" onclick="rollDice('d8')">d8</span>
+                                    <span class="dice-chip" onclick="rollDice('d10')">d10</span>
+                                    <span class="dice-chip" onclick="rollDice('d12')">d12</span>
+                                    <span class="dice-chip" onclick="rollDice('d20')">d20</span>
+                                    <span class="dice-chip" onclick="rollDice('d100')">d100</span>
+                                </div>
+                                <div class="chat-input-row">
+                                    <textarea class="chat-input" rows="1" placeholder="Descreva sua ação ou escreva... (Enter para enviar)" id="chat-input" onkeydown="handleKey(event)"></textarea>
+                                    <button class="send-btn" onclick="sendMessage()">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <line x1="22" y1="2" x2="11" y2="13"/>
+                                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── FICHA ── -->
+                <div class="panel" id="panel-ficha">
+                    <div class="ficha-panel">
+                        <div class="panel-title">Ficha do Personagem</div>
+                        <div class="panel-subtitle">D&D 5ª Edição — Visualização e exportação</div>
+
+                        <div class="char-hero">
+                            <div class="char-avatar-lg">T</div>
+                            <div class="char-info">
+                                <div class="char-name">Theron Ashveil</div>
+                                <div class="char-tags">
+                                    <span class="tag gold">Nível 7</span>
+                                    <span class="tag arcane">Mago · Escola de Evocação</span>
+                                    <span class="tag">Élfico</span>
+                                    <span class="tag">Sábio</span>
+                                </div>
+                                <div class="char-stats">
+                                    <div class="stat-box">
+                                        <div class="stat-label">FOR</div>
+                                        <div class="stat-val">8</div>
+                                        <div class="stat-mod">−1</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">DES</div>
+                                        <div class="stat-val">14</div>
+                                        <div class="stat-mod">+2</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">CON</div>
+                                        <div class="stat-val">13</div>
+                                        <div class="stat-mod">+1</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">INT</div>
+                                        <div class="stat-val">18</div>
+                                        <div class="stat-mod" style="color:var(--accent-gold)">+4</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">SAB</div>
+                                        <div class="stat-val">12</div>
+                                        <div class="stat-mod">+1</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-label">CAR</div>
+                                        <div class="stat-val">10</div>
+                                        <div class="stat-mod">+0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="pdf-section">
+                            <div class="pdf-toolbar">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-ember)">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10 9 9 9 8 9"/>
+                                </svg>
+                                <span class="pdf-toolbar-title">Theron_Ashveil_Ficha.pdf</span>
+                                <div class="pdf-actions">
+                                    <button class="btn btn-outline">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                        Editar Ficha
+                                    </button>
+                                    <button class="btn btn-primary">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                                        </svg>
+                                        Baixar PDF
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="pdf-preview">
+                                <div class="pdf-preview-inner">
+                                    <div class="icon">📄</div>
+                                    <p>Visualizador de PDF</p>
+                                    <p style="font-size:11px; margin-top:4px; color:var(--text-muted);">O PDF da ficha será<br>renderizado aqui</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── CONFIG ── -->
+                <div class="panel" id="panel-config">
+                    <div class="config-panel">
+                        <div class="panel-title">Configurações</div>
+                        <div class="panel-subtitle">Personalize sua experiência na mesa</div>
+
+                        <!-- Aparência -->
+                        <div class="config-section">
+                            <div class="config-section-header">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-arcane)">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M20.188 10.934l-1.383-.8a6.952 6.952 0 000-4.268l1.383-.8A1 1 0 0021 4.2V3.8a1 1 0 00-1.5-.866L18.117 3.8A7 7 0 0012 1a7 7 0 00-6.117 2.8L4.5 2.934A1 1 0 003 3.8v.4a1 1 0 00.812.981l1.383.8a6.952 6.952 0 000 4.268l-1.383.8A1 1 0 003 12v.4a1 1 0 00.812.981l1.383.8A7 7 0 0012 23a7 7 0 006.117-9.8l1.383-.8A1 1 0 0021 11.6v-.4a1 1 0 00-.812-.981z"/>
+                                </svg>
+                                <span class="config-section-title">Aparência</span>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-info">
+                                    <div class="config-label">Tema</div>
+                                    <div class="config-desc">Esquema de cores da interface</div>
+                                </div>
+                                <div class="theme-options">
+                                    <div class="theme-opt theme-dark active" title="Escuro" onclick="setTheme('dark', this)"></div>
+                                    <div class="theme-opt theme-light" title="Claro" onclick="setTheme('light', this)"></div>
+                                    <div class="theme-opt theme-blood" title="Sangue" onclick="setTheme('blood', this)"></div>
+                                </div>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-info">
+                                    <div class="config-label">Cor de Destaque</div>
+                                    <div class="config-desc">Tom primário da interface</div>
+                                </div>
+                                <div class="accent-options">
+                                    <div class="accent-opt active" style="background:#c4a05c" title="Dourado"></div>
+                                    <div class="accent-opt" style="background:#7c5cbf" title="Arcano"></div>
+                                    <div class="accent-opt" style="background:#d4683a" title="Brasa"></div>
+                                    <div class="accent-opt" style="background:#4a90a4" title="Gelo"></div>
+                                    <div class="accent-opt" style="background:#4caf82" title="Esmeralda"></div>
+                                </div>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-info">
+                                    <div class="config-label">Tamanho da Fonte</div>
+                                    <div class="config-desc">Tamanho do texto no chat</div>
+                                </div>
+                                <select class="config-select">
+                                    <option>Pequeno</option>
+                                    <option selected>Médio</option>
+                                    <option>Grande</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Sessão -->
+                        <div class="config-section">
+                            <div class="config-section-header">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-gold)">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                <span class="config-section-title">Sessão</span>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-info">
+                                    <div class="config-label">Notificações de Chat</div>
+                                    <div class="config-desc">Alertas ao receber mensagens</div>
+                                </div>
+                                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-info">
+                                    <div class="config-label">Som de Dados</div>
+                                    <div class="config-desc">Efeito sonoro ao rolar dados</div>
+                                </div>
+                                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-info">
+                                    <div class="config-label">Animações de Rolagem</div>
+                                    <div class="config-desc">Animar os dados ao rolar</div>
+                                </div>
+                                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-info">
+                                    <div class="config-label">Mostrar timestamps</div>
+                                    <div class="config-desc">Exibir horário em cada mensagem</div>
+                                </div>
+                                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                            </div>
+                        </div>
+
+                        <!-- Conexão -->
+                        <div class="config-section">
+                            <div class="config-section-header">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-ice)">
+                                    <path d="M1 6l10.5 6L22 6M1 6v12l10.5 6L22 18V6M1 6l10.5-6L22 6"/>
+                                </svg>
+                                <span class="config-section-title">Conexão</span>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-info">
+                                    <div class="config-label">Endereço do Servidor</div>
+                                    <div class="config-desc">IP do mestre para esta sessão</div>
+                                </div>
+                                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent-ice);">192.168.1.42:8000</span>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-info">
+                                    <div class="config-label">Túnel Público (Cloudflare)</div>
+                                    <div class="config-desc">Acesso externo sem CGNAT</div>
+                                </div>
+                                <div class="toggle-switch" onclick="this.classList.toggle('on')"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!-- /content -->
+        </div><!-- /main -->
+
+        <script>
+            // ═══ SIDEBAR TOGGLE ═══
+            function toggleSidebar() {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+            }
+
+            // ═══ NAVIGATION ═══
+            const titles = { mesa: ['Mesa', '— A Cripta Esquecida'], ficha: ['Ficha', '— Theron Ashveil'], config: ['Configurações', '— Preferências'] };
+
+            function navigate(section, el) {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                document.getElementById('panel-' + section).classList.add('active');
+                document.getElementById('topbar-title').textContent = titles[section][0];
+                document.getElementById('topbar-breadcrumb').textContent = titles[section][1];
+            }
+
+            // ═══ THEME ═══
+            function setTheme(theme, el) {
+                document.querySelectorAll('.theme-opt').forEach(o => o.classList.remove('active'));
+                el.classList.add('active');
+
+                if (theme === 'blood') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.documentElement.style.setProperty('--bg-void', '#0a0303');
+                    document.documentElement.style.setProperty('--bg-deep', '#100505');
+                    document.documentElement.style.setProperty('--bg-surface', '#160707');
+                    document.documentElement.style.setProperty('--bg-raised', '#1c0a0a');
+                    document.documentElement.style.setProperty('--bg-float', '#241010');
+                    document.documentElement.style.setProperty('--accent-gold', '#c4403a');
+                    document.documentElement.style.setProperty('--border-glow', 'rgba(196,64,58,0.35)');
+                    document.documentElement.style.setProperty('--glow-gold', 'rgba(196,64,58,0.1)');
+                } else {
+                    ['--bg-void','--bg-deep','--bg-surface','--bg-raised','--bg-float','--accent-gold','--border-glow','--glow-gold'].forEach(v =>
+                        document.documentElement.style.removeProperty(v)
+                    );
+                    document.documentElement.setAttribute('data-theme', theme);
+                }
+            }
+
+            // ═══ DICE ROLL ═══
+            function rollDice(die) {
+                const faces = parseInt(die.replace('d', ''));
+                const result = Math.floor(Math.random() * faces) + 1;
+                const isMax = result === faces;
+                const isMin = result === 1;
+                const dieClass = isMax ? 'die max' : isMin ? 'die min' : 'die';
+
+                const html = `
+        <div class="msg msg-roll">
+          <div class="msg-header">
+            <span class="msg-author c-arcane">Theron</span>
+            <span class="msg-time">${getTime()}</span>
+            <span style="margin-left:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent-gold); background:rgba(196,160,92,0.1); border:1px solid rgba(196,160,92,0.2); padding:1px 6px; border-radius:4px;">🎲 rolou dados</span>
+          </div>
+          <div class="roll-display">
+            <span class="roll-notation">1${die}</span>
+            <span class="roll-arrow">→</span>
+            <div class="roll-dice">
+              <div class="${dieClass}">${result}</div>
+            </div>
+            <span class="roll-total" style="${isMax ? 'color:var(--accent-gold)' : isMin ? 'color:var(--accent-ember)' : ''}">${result}</span>
+            ${isMax ? '<span class="roll-label" style="color:var(--accent-gold)">⚡ Crítico!</span>' : ''}
+            ${isMin ? '<span class="roll-label" style="color:var(--accent-ember)">💀 Falha!</span>' : ''}
+          </div>
+        </div>`;
+                appendChat(html);
+            }
+
+            // ═══ CHAT ═══
+            function getTime() {
+                const d = new Date();
+                return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+            }
+
+            function sendMessage() {
+                const inp = document.getElementById('chat-input');
+                const text = inp.value.trim();
+                if (!text) return;
+                const html = `
+        <div class="msg">
+          <div class="msg-header">
+            <span class="msg-author c-arcane">Theron</span>
+            <span class="msg-time">${getTime()}</span>
+          </div>
+          <div class="msg-body">${text}</div>
+        </div>`;
+                appendChat(html);
+                inp.value = '';
+                inp.style.height = 'auto';
+            }
+
+            function appendChat(html) {
+                const box = document.getElementById('chat-messages');
+                box.insertAdjacentHTML('beforeend', html);
+                box.scrollTop = box.scrollHeight;
+            }
+
+            function handleKey(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            }
+
+            // Auto-resize textarea
+            document.getElementById('chat-input').addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+            });
+        </script>
+    </body>
+</html>

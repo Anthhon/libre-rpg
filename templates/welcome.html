@@ -1,0 +1,895 @@
+{# TODO: Unify welcome CSS page to main CSS #}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Libre RPG — Bem-vindo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ══════════════════════════════════════
+       TOKENS
+    ══════════════════════════════════════ */
+    :root {
+      --bg-void:     #06080d;
+      --bg-deep:     #0b0f18;
+      --bg-card:     #111826;
+      --bg-input:    #0e1520;
+      --border:      rgba(255,255,255,0.06);
+      --border-glow: rgba(196,160,92,0.4);
+      --gold:        #c4a05c;
+      --gold-light:  #dfc07a;
+      --gold-dim:    rgba(196,160,92,0.15);
+      --ember:       #c45c3a;
+      --text-bright: #ede5d0;
+      --text-mid:    #8a7d68;
+      --text-muted:  #3d3528;
+      --error:       #c4503a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Crimson Pro', Georgia, serif;
+      background: var(--bg-void);
+      color: var(--text-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ══════════════════════════════════════
+       BACKGROUND LAYERS
+    ══════════════════════════════════════ */
+
+    /* Vignette radial */
+    .bg-vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%,
+        rgba(196,160,92,0.04) 0%,
+        rgba(12,16,26,0.6) 50%,
+        #06080d 100%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Estrelas animadas */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: twinkle var(--dur, 4s) ease-in-out infinite var(--delay, 0s);
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: var(--min-op, 0.05); transform: scale(1); }
+      50%       { opacity: var(--max-op, 0.4);  transform: scale(1.4); }
+    }
+
+    /* Linhas ornamentais de fundo */
+    .bg-lines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-lines::before,
+    .bg-lines::after {
+      content: '';
+      position: absolute;
+      border: 1px solid rgba(196,160,92,0.04);
+      border-radius: 50%;
+    }
+
+    .bg-lines::before {
+      width: 900px; height: 900px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .bg-lines::after {
+      width: 600px; height: 600px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Noise texture */
+    .noise {
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.6;
+    }
+
+    /* ══════════════════════════════════════
+       CARD
+    ══════════════════════════════════════ */
+    .card-wrap {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 460px;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 44px 40px 36px;
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(196,160,92,0.06),
+        0 32px 64px rgba(0,0,0,0.6),
+        0 0 80px rgba(196,160,92,0.04) inset;
+
+      animation: cardReveal 1s cubic-bezier(0.4,0,0.2,1) both;
+    }
+
+    @keyframes cardReveal {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Linha dourada topo */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.7;
+    }
+
+    /* Brilho de canto */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(196,160,92,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════════
+       ORNAMENTO SUPERIOR
+    ══════════════════════════════════════ */
+    .ornament {
+      text-align: center;
+      margin-bottom: 32px;
+      animation: fadeDown 0.8s ease both 0.2s;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .ornament-symbol {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px; height: 64px;
+      border: 1px solid var(--border-glow);
+      border-radius: 50%;
+      margin-bottom: 20px;
+      position: relative;
+      background: radial-gradient(circle, rgba(196,160,92,0.08) 0%, transparent 70%);
+      box-shadow: 0 0 24px rgba(196,160,92,0.1);
+    }
+
+    .ornament-symbol::before,
+    .ornament-symbol::after {
+      content: '';
+      position: absolute;
+      border: 1px solid rgba(196,160,92,0.15);
+      border-radius: 50%;
+    }
+
+    .ornament-symbol::before { inset: -8px; }
+    .ornament-symbol::after  { inset: -14px; }
+
+    .ornament-symbol svg {
+      width: 28px; height: 28px;
+      color: var(--gold);
+      filter: drop-shadow(0 0 8px rgba(196,160,92,0.5));
+    }
+
+    .logo-text {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      text-shadow: 0 0 30px rgba(196,160,92,0.3);
+      line-height: 1;
+    }
+
+    .logo-sub {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      margin-top: 8px;
+    }
+
+    /* ══════════════════════════════════════
+       DIVISOR COM ORNAMENTO
+    ══════════════════════════════════════ */
+    .divider-ornament {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+      animation: fadeDown 0.8s ease both 0.35s;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-glow));
+    }
+
+    .divider-line:last-child {
+      background: linear-gradient(90deg, var(--border-glow), transparent);
+    }
+
+    .divider-diamond {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      opacity: 0.6;
+      box-shadow: 0 0 6px var(--gold);
+    }
+
+    .welcome-text {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--text-mid);
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════════
+       FORM
+    ══════════════════════════════════════ */
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .field {
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .field:nth-child(1) { animation-delay: 0.45s; }
+    .field:nth-child(2) { animation-delay: 0.55s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .label-text {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+    }
+
+    .label-required {
+      color: var(--gold);
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .label-optional {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      transition: color 0.25s;
+      pointer-events: none;
+    }
+
+    .field-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 13px 16px 13px 42px;
+      font-family: 'Crimson Pro', serif;
+      font-size: 16px;
+      color: var(--text-bright);
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      letter-spacing: 0.01em;
+    }
+
+    .field-input::placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .field-input:focus {
+      border-color: rgba(196,160,92,0.5);
+      background: rgba(196,160,92,0.03);
+      box-shadow: 0 0 0 3px rgba(196,160,92,0.06), 0 0 16px rgba(196,160,92,0.06) inset;
+    }
+
+    .field-input:focus + .input-border-glow {
+      opacity: 1;
+    }
+
+    .field-input:focus ~ .input-icon,
+    .input-wrap:focus-within .input-icon {
+      color: var(--gold);
+    }
+
+    /* Estado de erro */
+    .field-input.error {
+      border-color: rgba(196,80,58,0.5);
+      box-shadow: 0 0 0 3px rgba(196,80,58,0.06);
+    }
+
+    .field-hint {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 6px;
+      padding-left: 2px;
+      transition: color 0.2s;
+    }
+
+    .field-hint.error-hint {
+      color: var(--error);
+      font-style: normal;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    /* Preview do apelido */
+    .nickname-preview {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      letter-spacing: 0.05em;
+    }
+
+    .nickname-preview.visible { opacity: 0.7; }
+
+    /* ══════════════════════════════════════
+       BOTÃO
+    ══════════════════════════════════════ */
+    .submit-wrap {
+      margin-top: 8px;
+      animation: fadeUp 0.7s ease both 0.65s;
+    }
+
+    .submit-btn {
+      width: 100%;
+      position: relative;
+      background: transparent;
+      border: 1px solid var(--border-glow);
+      border-radius: 9px;
+      padding: 15px 24px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+        rgba(196,160,92,0.12) 0%,
+        rgba(196,160,92,0.06) 50%,
+        rgba(196,160,92,0.12) 100%
+      );
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+
+    .submit-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+        rgba(196,160,92,0.28) 0%,
+        rgba(196,160,92,0.15) 100%
+      );
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .submit-btn:hover::after { opacity: 1; }
+
+    .submit-btn:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 32px rgba(196,160,92,0.15), 0 4px 16px rgba(0,0,0,0.3);
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 0 16px rgba(196,160,92,0.1);
+    }
+
+    .submit-text {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 0 16px rgba(196,160,92,0.4);
+    }
+
+    .submit-icon {
+      position: relative;
+      z-index: 1;
+      color: var(--gold);
+      transition: transform 0.3s;
+    }
+
+    .submit-btn:hover .submit-icon {
+      transform: translateX(4px);
+    }
+
+    /* Loading state */
+    .submit-btn.loading .submit-text::after {
+      content: '...';
+      animation: dots 1.2s infinite;
+    }
+
+    @keyframes dots {
+      0%   { content: '.'; }
+      33%  { content: '..'; }
+      66%  { content: '...'; }
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER DO CARD
+    ══════════════════════════════════════ */
+    .card-footer {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.7s ease both 0.75s;
+    }
+
+    .footer-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .footer-diamond {
+      width: 4px; height: 4px;
+      background: var(--text-muted);
+      transform: rotate(45deg);
+      opacity: 0.4;
+    }
+
+    .footer-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    /* ══════════════════════════════════════
+       TELA DE SUCESSO
+    ══════════════════════════════════════ */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .success-screen.show { display: block; }
+    .form-content.hide   { display: none; }
+
+    .success-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 1px solid rgba(76,175,130,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      background: rgba(76,175,130,0.06);
+      box-shadow: 0 0 24px rgba(76,175,130,0.1);
+      animation: successPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes successPop {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .success-icon svg { color: #4caf82; }
+
+    .success-name {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 8px;
+      animation: fadeUp 0.5s ease both 0.2s;
+    }
+
+    .success-msg {
+      font-size: 15px;
+      color: var(--text-mid);
+      font-style: italic;
+      animation: fadeUp 0.5s ease both 0.35s;
+    }
+
+    .success-redirect {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 20px;
+      animation: fadeUp 0.5s ease both 0.5s;
+    }
+
+    .redirect-bar {
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .redirect-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 1px;
+      width: 0%;
+      animation: fillBar 2.5s linear both 0.6s;
+    }
+
+    @keyframes fillBar {
+      from { width: 0%; }
+      to   { width: 100%; }
+    }
+
+    /* ══════════════════════════════════════
+       SCROLLBAR
+    ══════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+  </style>
+</head>
+<body>
+
+  <!-- Camadas de fundo -->
+  <div class="bg-vignette"></div>
+  <div class="bg-lines"></div>
+  <div class="stars" id="stars"></div>
+  <div class="noise"></div>
+
+  <!-- Card principal -->
+  <div class="card-wrap">
+    <div class="card">
+
+      <!-- Ornamento e logo -->
+      <div class="ornament">
+        <div class="ornament-symbol">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <div class="logo-text">Libre RPG</div>
+        <div class="logo-sub">Mesa Virtual de Aventuras</div>
+      </div>
+
+      <!-- Divisor -->
+      <div class="divider-ornament">
+        <div class="divider-line"></div>
+        <div class="divider-diamond"></div>
+        <span class="welcome-text">Identificação</span>
+        <div class="divider-diamond"></div>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Conteúdo do formulário -->
+      <div class="form-content" id="form-content">
+        <form class="form" id="welcome-form" onsubmit="handleSubmit(event)" novalidate>
+
+          <!-- Nome -->
+          <div class="field" id="field-name">
+            <div class="field-label">
+              <span class="label-text">Nome</span>
+              <span class="label-required">✦</span>
+            </div>
+            <div class="input-wrap">
+              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <input
+                type="text"
+                class="field-input"
+                id="input-name"
+                name="nome"
+                placeholder="Seu nome verdadeiro..."
+                autocomplete="off"
+                maxlength="48"
+                oninput="clearError('field-name')"
+              />
+            </div>
+            <div class="field-hint" id="hint-name">Como você será chamado na mesa</div>
+          </div>
+
+          <!-- Apelido -->
+          <div class="field" id="field-nickname">
+            <div class="field-label">
+              <span class="label-text">Apelido</span>
+              <span class="label-optional">opcional</span>
+            </div>
+            <div class="input-wrap">
+              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+              </svg>
+              <input
+                type="text"
+                class="field-input"
+                id="input-nickname"
+                name="apelido"
+                placeholder="Seu codinome na guilda..."
+                autocomplete="off"
+                maxlength="24"
+                oninput="updateNicknamePreview(this)"
+              />
+              <span class="nickname-preview" id="nickname-preview"></span>
+            </div>
+            <div class="field-hint" id="hint-nickname">Um apelido que identifica você no chat</div>
+          </div>
+
+          <!-- Botão -->
+          <div class="submit-wrap">
+            <button type="submit" class="submit-btn" id="submit-btn">
+              <span class="submit-text">Entrar na Mesa</span>
+              <svg class="submit-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Tela de sucesso -->
+      <div class="success-screen" id="success-screen">
+        <div class="success-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="success-name" id="success-name"></div>
+        <div class="success-msg" id="success-msg"></div>
+        <div class="success-redirect">
+          Redirecionando para a mesa...
+          <div class="redirect-bar">
+            <div class="redirect-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <div class="footer-line">
+          <div class="footer-diamond"></div>
+          <span class="footer-text">Livre · Gratuito · Open Source</span>
+          <div class="footer-diamond"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ══════════════════════════
+    //  ESTRELAS
+    // ══════════════════════════
+    (function generateStars() {
+      const container = document.getElementById('stars');
+      const configs = [
+        { count: 40, minSize: 1, maxSize: 1.5, minOp: 0.03, maxOp: 0.2, minDur: 3, maxDur: 6 },
+        { count: 20, minSize: 1.5, maxSize: 2.5, minOp: 0.05, maxOp: 0.35, minDur: 4, maxDur: 8 },
+        { count: 8,  minSize: 2,   maxSize: 3.5, minOp: 0.08, maxOp: 0.5,  minDur: 5, maxDur: 10 },
+      ];
+      configs.forEach(({ count, minSize, maxSize, minOp, maxOp, minDur, maxDur }) => {
+        for (let i = 0; i < count; i++) {
+          const s = document.createElement('div');
+          s.className = 'star';
+          const size = minSize + Math.random() * (maxSize - minSize);
+          s.style.cssText = `
+            width:${size}px; height:${size}px;
+            left:${Math.random()*100}%; top:${Math.random()*100}%;
+            --min-op:${minOp}; --max-op:${maxOp};
+            --dur:${(minDur + Math.random()*(maxDur-minDur)).toFixed(1)}s;
+            --delay:-${(Math.random()*maxDur).toFixed(1)}s;
+          `;
+          container.appendChild(s);
+        }
+      });
+    })();
+
+    // ══════════════════════════
+    //  PREVIEW DO APELIDO
+    // ══════════════════════════
+    function updateNicknamePreview(input) {
+      const preview = document.getElementById('nickname-preview');
+      const val = input.value.trim();
+      if (val.length > 0) {
+        preview.textContent = val;
+        preview.classList.add('visible');
+        // Ajusta padding do input para não sobrepor o texto
+        input.style.paddingRight = Math.min(val.length * 8 + 24, 140) + 'px';
+      } else {
+        preview.classList.remove('visible');
+        input.style.paddingRight = '16px';
+      }
+    }
+
+    // ══════════════════════════
+    //  VALIDAÇÃO
+    // ══════════════════════════
+    function clearError(fieldId) {
+      const field = document.getElementById(fieldId);
+      const input = field.querySelector('.field-input');
+      const hint  = field.querySelector('.field-hint');
+      input.classList.remove('error');
+      hint.classList.remove('error-hint');
+      if (fieldId === 'field-name') {
+        hint.textContent = 'Como você será chamado na mesa';
+      }
+    }
+
+    function showError(fieldId, msg) {
+      const field = document.getElementById(fieldId);
+      const input = field.querySelector('.field-input');
+      const hint  = field.querySelector('.field-hint');
+      input.classList.add('error');
+      hint.classList.add('error-hint');
+      hint.textContent = '⚠ ' + msg;
+      input.focus();
+
+      // Shake
+      input.animate([
+        { transform: 'translateX(0)' },
+        { transform: 'translateX(-6px)' },
+        { transform: 'translateX(6px)' },
+        { transform: 'translateX(-4px)' },
+        { transform: 'translateX(4px)' },
+        { transform: 'translateX(0)' },
+      ], { duration: 320, easing: 'ease-out' });
+    }
+
+    // ══════════════════════════
+    //  SUBMIT
+    // ══════════════════════════
+    function handleSubmit(e) {
+      e.preventDefault();
+
+      const nameVal     = document.getElementById('input-name').value.trim();
+      const nicknameVal = document.getElementById('input-nickname').value.trim();
+
+      // Validação
+      if (!nameVal) {
+        showError('field-name', 'O nome é obrigatório para entrar na mesa');
+        return;
+      }
+      if (nameVal.length < 2) {
+        showError('field-name', 'O nome precisa ter ao menos 2 caracteres');
+        return;
+      }
+
+      // Loading
+      const btn = document.getElementById('submit-btn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      // Simula requisição (aqui virá o fetch/form submit do Django)
+      setTimeout(() => {
+        showSuccess(nameVal, nicknameVal);
+      }, 900);
+    }
+
+    function showSuccess(name, nickname) {
+      document.getElementById('form-content').classList.add('hide');
+      const screen = document.getElementById('success-screen');
+      screen.classList.add('show');
+
+      const display = nickname ? `${name} · "${nickname}"` : name;
+      document.getElementById('success-name').textContent = display;
+      document.getElementById('success-msg').textContent =
+        nickname
+          ? `Bem-vindo à mesa, ${nickname}. Que os dados estejam ao seu favor.`
+          : `Bem-vindo à mesa, ${name}. Que os dados estejam ao seu favor.`;
+
+      // Redireciona após animação (2.5s da barra + 0.6s delay + 0.3s margem)
+      setTimeout(() => {
+        // window.location.href = '/mesa/';  ← descomente no Django
+        console.log('Redirecionando...', { name, nickname });
+      }, 3400);
+    }
+  </script>
+</body>
+</html>
