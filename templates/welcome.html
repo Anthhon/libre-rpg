@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
     <head>
@@ -7,7 +8,6 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
-        {% load static %}
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
     </head>
     <body>
@@ -53,18 +53,6 @@
                                     <circle cx="12" cy="7" r="4"/>
                                 </svg>
                                 {{ form.username }}
-                                <!--
-                                    <input
-                                    type="text"
-                                    class="field-input"
-                                    id="input-name"
-                                    name="name"
-                                    placeholder="Seu nome verdadeiro..."
-                                    autocomplete="off"
-                                    maxlength="48"
-                                    oninput="clearError('field-name')"
-                                    />
-                                -->
                             </div>
                             <div class="field-hint" id="hint-name">Como você será chamado na mesa</div>
                         </div>
@@ -81,18 +69,6 @@
                                     <path d="M7 11V7a5 5 0 0110 0v4"/>
                                 </svg>
                                 {{ form.password }}
-                                <!--
-                                    <input
-                                    type="password"
-                                    class="field-input"
-                                    id="input-password"
-                                    name="password"
-                                    placeholder="Sua senha secreta..."
-                                    autocomplete="current-password"
-                                    maxlength="128"
-                                    oninput="clearError('field-password')"
-                                    />
-                                -->
                                 <button type="button" class="password-toggle" id="password-toggle" onclick="togglePassword()" title="Mostrar/ocultar senha">
                                     <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -142,153 +118,12 @@
                         <div class="footer-diamond"></div>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <script>
-            // ══════════════════════════
-            //  ESTRELAS
-            // ══════════════════════════
-            (function generateStars() {
-                const container = document.getElementById('stars');
-                const configs = [
-                    { count: 40, minSize: 1, maxSize: 1.5, minOp: 0.03, maxOp: 0.2, minDur: 3, maxDur: 6 },
-                    { count: 20, minSize: 1.5, maxSize: 2.5, minOp: 0.05, maxOp: 0.35, minDur: 4, maxDur: 8 },
-                    { count: 8,  minSize: 2,   maxSize: 3.5, minOp: 0.08, maxOp: 0.5,  minDur: 5, maxDur: 10 },
-                ];
-                configs.forEach(({ count, minSize, maxSize, minOp, maxOp, minDur, maxDur }) => {
-                    for (let i = 0; i < count; i++) {
-                        const s = document.createElement('div');
-                        s.className = 'star';
-                        const size = minSize + Math.random() * (maxSize - minSize);
-                        s.style.cssText = `
-            width:${size}px; height:${size}px;
-            left:${Math.random()*100}%; top:${Math.random()*100}%;
-            --min-op:${minOp}; --max-op:${maxOp};
-            --dur:${(minDur + Math.random()*(maxDur-minDur)).toFixed(1)}s;
-            --delay:-${(Math.random()*maxDur).toFixed(1)}s;
-          `;
-                        container.appendChild(s);
-                    }
-                });
-            })();
-
-            // ══════════════════════════
-            //  PREVIEW DO APELIDO
-            // ══════════════════════════
-            function updateNicknamePreview(input) {
-                const preview = document.getElementById('nickname-preview');
-                const val = input.value.trim();
-                if (val.length > 0) {
-                    preview.textContent = val;
-                    preview.classList.add('visible');
-                    // Ajusta padding do input para não sobrepor o texto
-                    input.style.paddingRight = Math.min(val.length * 8 + 24, 140) + 'px';
-                } else {
-                    preview.classList.remove('visible');
-                    input.style.paddingRight = '16px';
-                }
-            }
-
-            // ══════════════════════════
-            //  VALIDAÇÃO
-            // ══════════════════════════
-            function clearError(fieldId) {
-                const field = document.getElementById(fieldId);
-                const input = field.querySelector('.field-input');
-                const hint  = field.querySelector('.field-hint');
-                input.classList.remove('error');
-                hint.classList.remove('error-hint');
-                if (fieldId === 'field-name') {
-                    hint.textContent = 'Como você será chamado na mesa';
-                }
-            }
-
-            function showError(fieldId, msg) {
-                const field = document.getElementById(fieldId);
-                const input = field.querySelector('.field-input');
-                const hint  = field.querySelector('.field-hint');
-                input.classList.add('error');
-                hint.classList.add('error-hint');
-                hint.textContent = '⚠ ' + msg;
-                input.focus();
-
-                // Shake
-                input.animate([
-                    { transform: 'translateX(0)' },
-                    { transform: 'translateX(-6px)' },
-                    { transform: 'translateX(6px)' },
-                    { transform: 'translateX(-4px)' },
-                    { transform: 'translateX(4px)' },
-                    { transform: 'translateX(0)' },
-                ], { duration: 320, easing: 'ease-out' });
-            }
-
-            // ══════════════════════════
-            //  SUBMIT
-            // ══════════════════════════
-            function handleSubmit(e) {
-                e.preventDefault();
-
-                const nameVal     = document.getElementById('input-name').value.trim();
-                const nicknameVal = document.getElementById('input-nickname').value.trim();
-
-                // Validação
-                if (!nameVal) {
-                    showError('field-name', 'O nome é obrigatório para entrar na mesa');
-                    return;
-                }
-                if (nameVal.length < 2) {
-                    showError('field-name', 'O nome precisa ter ao menos 2 caracteres');
-                    return;
-                }
-
-                // Loading
-                const btn = document.getElementById('submit-btn');
-                btn.classList.add('loading');
-                btn.disabled = true;
-
-                // Simula requisição (aqui virá o fetch/form submit do Django)
-                setTimeout(() => {
-                    showSuccess(nameVal, nicknameVal);
-                }, 900);
-            }
-
-            function showSuccess(name, nickname) {
-                document.getElementById('form-content').classList.add('hide');
-                const screen = document.getElementById('success-screen');
-                screen.classList.add('show');
-
-                const display = nickname ? `${name} · "${nickname}"` : name;
-                document.getElementById('success-name').textContent = display;
-                document.getElementById('success-msg').textContent =
-                    nickname
-                    ? `Bem-vindo à mesa, ${nickname}. Que os dados estejam ao seu favor.`
-                    : `Bem-vindo à mesa, ${name}. Que os dados estejam ao seu favor.`;
-
-                // Redireciona após animação (2.5s da barra + 0.6s delay + 0.3s margem)
-                setTimeout(() => {
-                    // window.location.href = '/mesa/';  ← descomente no Django
-                    console.log('Redirecionando...', { name, nickname });
-                }, 3400);
-            }
-
-            function togglePassword() {
-                const input  = document.getElementById('input-password');
-                const icon   = document.getElementById('eye-icon');
-                const isHidden = input.type === 'password';
-
-                input.type = isHidden ? 'text' : 'password';
-
-                // Troca o ícone: olho aberto ↔ olho fechado
-                icon.innerHTML = isHidden
-                    ? `<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
-       <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
-       <line x1="1" y1="1" x2="23" y2="23"/>`
-                    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-       <circle cx="12" cy="12" r="3"/>`;
-            }
-        </script>
+        <script src="{% static 'js/script.js'%}"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     </body>
 </html>
