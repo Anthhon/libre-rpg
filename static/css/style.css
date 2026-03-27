@@ -1231,8 +1231,6 @@ ANIMATIONS
 .die:nth-child(3) { animation-delay: 0.1s; }
 .die:nth-child(4) { animation-delay: 0.15s; }
 
-/* TODO: Concatenate login page CSS with up-most CSS */
-
 /* ══════════════════════════════════════
 BACKGROUND LAYERS
 ══════════════════════════════════════ */
@@ -1316,6 +1314,7 @@ CARD
 .card-wrap {
     display: flex;
     justify-content: center;
+    height: min-content;
     position: relative;
     z-index: 10;
     width: 100%;
@@ -1810,4 +1809,38 @@ TELA DE SUCESSO
 @keyframes fillBar {
     from { width: 0%; }
     to   { width: 100%; }
+}
+
+/* Password toggle button */
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover { color: var(--gold); }
+
+/* Admin button */
+a.icon-btn[title="Painel Admin"]:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(212, 104, 58, 0.08);
+}
+
+/* Logout button */
+a.icon-btn[title="Sair"]:hover {
+    color: var(--accent-ember);
+    border-color: rgba(212, 104, 58, 0.35);
+    background: rgba(212, 104, 58, 0.08);
 }

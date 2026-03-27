@@ -10,13 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Add the apps directory to Python path
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+# sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
-# Quick-start development settings - unsuitable for production
+# TODO: Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -26,7 +31,6 @@ SECRET_KEY = 'django-insecure-!g^^=wvy17&7@=+nd-fc4y4ba)nzn87@u)^gwr+2!h2n9aceyq
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -39,9 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Custom apps ()
-    # 'campaigns',
-    # 'character_sheets',
-    # 'map_viewer',
+    'apps.core',
 ]
 
 MIDDLEWARE = [

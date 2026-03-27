@@ -1,267 +1,294 @@
-{# TODO: Unify welcome CSS page to main CSS #}
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Libre RPG — Bem-vindo</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-  {# Camadas de fundo #}
-  <div class="bg-vignette"></div>
-  <div class="bg-lines"></div>
-  <div class="stars" id="stars"></div>
-  <div class="noise"></div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Libre RPG — Bem-vindo</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+    <body>
+        {# Camadas de fundo #}
+        <div class="bg-vignette"></div>
+        <div class="bg-lines"></div>
+        <div class="stars" id="stars"></div>
+        <div class="noise"></div>
 
-  {# Card principal #}
-  <div class="card-wrap">
-    <div class="card">
+        {# Card principal #}
+        <div class="card-wrap">
+            <div class="card">
 
-      {# Ornamento e logo #}
-      <div class="ornament">
-        <div class="logo-text">Libre RPG</div>
-        <div class="logo-sub">Mesa Virtual de Aventuras</div>
-      </div>
+                {# Ornamento e logo #}
+                <div class="ornament">
+                    <div class="logo-text">Libre RPG</div>
+                    <div class="logo-sub">Mesa Virtual de Aventuras</div>
+                </div>
 
-      {# Divisor #}
-      <div class="divider-ornament">
-        <div class="divider-line"></div>
-        <div class="divider-diamond"></div>
-        <span class="welcome-text">Identificação</span>
-        <div class="divider-diamond"></div>
-        <div class="divider-line"></div>
-      </div>
+                {# Divisor #}
+                <div class="divider-ornament">
+                    <div class="divider-line"></div>
+                    <div class="divider-diamond"></div>
+                    <span class="welcome-text">Login</span>
+                    <div class="divider-diamond"></div>
+                    <div class="divider-line"></div>
+                </div>
 
-      {# Conteúdo do formulário #}
-      <div class="form-content" id="form-content">
-        <form class="form" id="welcome-form" onsubmit="handleSubmit(event)" novalidate>
+                {# Conteúdo do formulário #}
+                <div class="form-content" id="form-content">
+                    <form class="form" id="welcome-form" method="post" novalidate>
+                        {% csrf_token %}
 
-          {# Nome #}
-          <div class="field" id="field-name">
-            <div class="field-label">
-              <span class="label-text">Nome</span>
-              <span class="label-required">✦</span>
+                        {# Nome #}
+                        <div class="field" id="field-name">
+                            <div class="field-label">
+                                <span class="label-text">Nome</span>
+                                <span class="label-required">✦</span>
+                            </div>
+                            <div class="input-wrap">
+                                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                {{ form.username }}
+                                <!--
+                                    <input
+                                    type="text"
+                                    class="field-input"
+                                    id="input-name"
+                                    name="name"
+                                    placeholder="Seu nome verdadeiro..."
+                                    autocomplete="off"
+                                    maxlength="48"
+                                    oninput="clearError('field-name')"
+                                    />
+                                -->
+                            </div>
+                            <div class="field-hint" id="hint-name">Como você será chamado na mesa</div>
+                        </div>
+
+                        {# Senha #}
+                        <div class="field" id="field-password">
+                            <div class="field-label">
+                                <span class="label-text">Senha</span>
+                                <span class="label-required">✦</span>
+                            </div>
+                            <div class="input-wrap">
+                                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0110 0v4"/>
+                                </svg>
+                                {{ form.password }}
+                                <!--
+                                    <input
+                                    type="password"
+                                    class="field-input"
+                                    id="input-password"
+                                    name="password"
+                                    placeholder="Sua senha secreta..."
+                                    autocomplete="current-password"
+                                    maxlength="128"
+                                    oninput="clearError('field-password')"
+                                    />
+                                -->
+                                <button type="button" class="password-toggle" id="password-toggle" onclick="togglePassword()" title="Mostrar/ocultar senha">
+                                    <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="field-hint" id="hint-password">Digite sua senha para acessar o sistema</div>
+                        </div>
+
+                        {# Botão #}
+                        <div class="submit-wrap">
+                            <button type="submit" class="submit-btn" id="submit-btn">
+                                <span class="submit-text">Entrar na Mesa</span>
+                                <svg class="submit-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                    <polyline points="12 5 19 12 12 19"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                {# Tela de sucesso #}
+                <div class="success-screen" id="success-screen">
+                    <div class="success-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="success-name" id="success-name"></div>
+                    <div class="success-msg" id="success-msg"></div>
+                    <div class="success-redirect">
+                        Redirecionando para a mesa...
+                        <div class="redirect-bar">
+                            <div class="redirect-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Footer #}
+                <div class="card-footer">
+                    <div class="footer-line">
+                        <div class="footer-diamond"></div>
+                        <span class="footer-text">Livre · Gratuito · Open Source</span>
+                        <div class="footer-diamond"></div>
+                    </div>
+                </div>
+
             </div>
-            <div class="input-wrap">
-              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-              <input
-                type="text"
-                class="field-input"
-                id="input-name"
-                name="nome"
-                placeholder="Seu nome verdadeiro..."
-                autocomplete="off"
-                maxlength="48"
-                oninput="clearError('field-name')"
-              />
-            </div>
-            <div class="field-hint" id="hint-name">Como você será chamado na mesa</div>
-          </div>
-
-          {# Apelido #}
-          <div class="field" id="field-nickname">
-            <div class="field-label">
-              <span class="label-text">Apelido</span>
-              <span class="label-optional">opcional</span>
-            </div>
-            <div class="input-wrap">
-              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-                <line x1="7" y1="7" x2="7.01" y2="7"/>
-              </svg>
-              <input
-                type="text"
-                class="field-input"
-                id="input-nickname"
-                name="apelido"
-                placeholder="Seu codinome na guilda..."
-                autocomplete="off"
-                maxlength="24"
-                oninput="updateNicknamePreview(this)"
-              />
-              <span class="nickname-preview" id="nickname-preview"></span>
-            </div>
-            <div class="field-hint" id="hint-nickname">Um apelido que identifica você no chat</div>
-          </div>
-
-          {# Botão #}
-          <div class="submit-wrap">
-            <button type="submit" class="submit-btn" id="submit-btn">
-              <span class="submit-text">Entrar na Mesa</span>
-              <svg class="submit-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="5" y1="12" x2="19" y2="12"/>
-                <polyline points="12 5 19 12 12 19"/>
-              </svg>
-            </button>
-          </div>
-
-        </form>
-      </div>
-
-      {# Tela de sucesso #}
-      <div class="success-screen" id="success-screen">
-        <div class="success-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
         </div>
-        <div class="success-name" id="success-name"></div>
-        <div class="success-msg" id="success-msg"></div>
-        <div class="success-redirect">
-          Redirecionando para a mesa...
-          <div class="redirect-bar">
-            <div class="redirect-fill"></div>
-          </div>
-        </div>
-      </div>
 
-      {# Footer #}
-      <div class="card-footer">
-        <div class="footer-line">
-          <div class="footer-diamond"></div>
-          <span class="footer-text">Livre · Gratuito · Open Source</span>
-          <div class="footer-diamond"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    // ══════════════════════════
-    //  ESTRELAS
-    // ══════════════════════════
-    (function generateStars() {
-      const container = document.getElementById('stars');
-      const configs = [
-        { count: 40, minSize: 1, maxSize: 1.5, minOp: 0.03, maxOp: 0.2, minDur: 3, maxDur: 6 },
-        { count: 20, minSize: 1.5, maxSize: 2.5, minOp: 0.05, maxOp: 0.35, minDur: 4, maxDur: 8 },
-        { count: 8,  minSize: 2,   maxSize: 3.5, minOp: 0.08, maxOp: 0.5,  minDur: 5, maxDur: 10 },
-      ];
-      configs.forEach(({ count, minSize, maxSize, minOp, maxOp, minDur, maxDur }) => {
-        for (let i = 0; i < count; i++) {
-          const s = document.createElement('div');
-          s.className = 'star';
-          const size = minSize + Math.random() * (maxSize - minSize);
-          s.style.cssText = `
+        <script>
+            // ══════════════════════════
+            //  ESTRELAS
+            // ══════════════════════════
+            (function generateStars() {
+                const container = document.getElementById('stars');
+                const configs = [
+                    { count: 40, minSize: 1, maxSize: 1.5, minOp: 0.03, maxOp: 0.2, minDur: 3, maxDur: 6 },
+                    { count: 20, minSize: 1.5, maxSize: 2.5, minOp: 0.05, maxOp: 0.35, minDur: 4, maxDur: 8 },
+                    { count: 8,  minSize: 2,   maxSize: 3.5, minOp: 0.08, maxOp: 0.5,  minDur: 5, maxDur: 10 },
+                ];
+                configs.forEach(({ count, minSize, maxSize, minOp, maxOp, minDur, maxDur }) => {
+                    for (let i = 0; i < count; i++) {
+                        const s = document.createElement('div');
+                        s.className = 'star';
+                        const size = minSize + Math.random() * (maxSize - minSize);
+                        s.style.cssText = `
             width:${size}px; height:${size}px;
             left:${Math.random()*100}%; top:${Math.random()*100}%;
             --min-op:${minOp}; --max-op:${maxOp};
             --dur:${(minDur + Math.random()*(maxDur-minDur)).toFixed(1)}s;
             --delay:-${(Math.random()*maxDur).toFixed(1)}s;
           `;
-          container.appendChild(s);
-        }
-      });
-    })();
+                        container.appendChild(s);
+                    }
+                });
+            })();
 
-    // ══════════════════════════
-    //  PREVIEW DO APELIDO
-    // ══════════════════════════
-    function updateNicknamePreview(input) {
-      const preview = document.getElementById('nickname-preview');
-      const val = input.value.trim();
-      if (val.length > 0) {
-        preview.textContent = val;
-        preview.classList.add('visible');
-        // Ajusta padding do input para não sobrepor o texto
-        input.style.paddingRight = Math.min(val.length * 8 + 24, 140) + 'px';
-      } else {
-        preview.classList.remove('visible');
-        input.style.paddingRight = '16px';
-      }
-    }
+            // ══════════════════════════
+            //  PREVIEW DO APELIDO
+            // ══════════════════════════
+            function updateNicknamePreview(input) {
+                const preview = document.getElementById('nickname-preview');
+                const val = input.value.trim();
+                if (val.length > 0) {
+                    preview.textContent = val;
+                    preview.classList.add('visible');
+                    // Ajusta padding do input para não sobrepor o texto
+                    input.style.paddingRight = Math.min(val.length * 8 + 24, 140) + 'px';
+                } else {
+                    preview.classList.remove('visible');
+                    input.style.paddingRight = '16px';
+                }
+            }
 
-    // ══════════════════════════
-    //  VALIDAÇÃO
-    // ══════════════════════════
-    function clearError(fieldId) {
-      const field = document.getElementById(fieldId);
-      const input = field.querySelector('.field-input');
-      const hint  = field.querySelector('.field-hint');
-      input.classList.remove('error');
-      hint.classList.remove('error-hint');
-      if (fieldId === 'field-name') {
-        hint.textContent = 'Como você será chamado na mesa';
-      }
-    }
+            // ══════════════════════════
+            //  VALIDAÇÃO
+            // ══════════════════════════
+            function clearError(fieldId) {
+                const field = document.getElementById(fieldId);
+                const input = field.querySelector('.field-input');
+                const hint  = field.querySelector('.field-hint');
+                input.classList.remove('error');
+                hint.classList.remove('error-hint');
+                if (fieldId === 'field-name') {
+                    hint.textContent = 'Como você será chamado na mesa';
+                }
+            }
 
-    function showError(fieldId, msg) {
-      const field = document.getElementById(fieldId);
-      const input = field.querySelector('.field-input');
-      const hint  = field.querySelector('.field-hint');
-      input.classList.add('error');
-      hint.classList.add('error-hint');
-      hint.textContent = '⚠ ' + msg;
-      input.focus();
+            function showError(fieldId, msg) {
+                const field = document.getElementById(fieldId);
+                const input = field.querySelector('.field-input');
+                const hint  = field.querySelector('.field-hint');
+                input.classList.add('error');
+                hint.classList.add('error-hint');
+                hint.textContent = '⚠ ' + msg;
+                input.focus();
 
-      // Shake
-      input.animate([
-        { transform: 'translateX(0)' },
-        { transform: 'translateX(-6px)' },
-        { transform: 'translateX(6px)' },
-        { transform: 'translateX(-4px)' },
-        { transform: 'translateX(4px)' },
-        { transform: 'translateX(0)' },
-      ], { duration: 320, easing: 'ease-out' });
-    }
+                // Shake
+                input.animate([
+                    { transform: 'translateX(0)' },
+                    { transform: 'translateX(-6px)' },
+                    { transform: 'translateX(6px)' },
+                    { transform: 'translateX(-4px)' },
+                    { transform: 'translateX(4px)' },
+                    { transform: 'translateX(0)' },
+                ], { duration: 320, easing: 'ease-out' });
+            }
 
-    // ══════════════════════════
-    //  SUBMIT
-    // ══════════════════════════
-    function handleSubmit(e) {
-      e.preventDefault();
+            // ══════════════════════════
+            //  SUBMIT
+            // ══════════════════════════
+            function handleSubmit(e) {
+                e.preventDefault();
 
-      const nameVal     = document.getElementById('input-name').value.trim();
-      const nicknameVal = document.getElementById('input-nickname').value.trim();
+                const nameVal     = document.getElementById('input-name').value.trim();
+                const nicknameVal = document.getElementById('input-nickname').value.trim();
 
-      // Validação
-      if (!nameVal) {
-        showError('field-name', 'O nome é obrigatório para entrar na mesa');
-        return;
-      }
-      if (nameVal.length < 2) {
-        showError('field-name', 'O nome precisa ter ao menos 2 caracteres');
-        return;
-      }
+                // Validação
+                if (!nameVal) {
+                    showError('field-name', 'O nome é obrigatório para entrar na mesa');
+                    return;
+                }
+                if (nameVal.length < 2) {
+                    showError('field-name', 'O nome precisa ter ao menos 2 caracteres');
+                    return;
+                }
 
-      // Loading
-      const btn = document.getElementById('submit-btn');
-      btn.classList.add('loading');
-      btn.disabled = true;
+                // Loading
+                const btn = document.getElementById('submit-btn');
+                btn.classList.add('loading');
+                btn.disabled = true;
 
-      // Simula requisição (aqui virá o fetch/form submit do Django)
-      setTimeout(() => {
-        showSuccess(nameVal, nicknameVal);
-      }, 900);
-    }
+                // Simula requisição (aqui virá o fetch/form submit do Django)
+                setTimeout(() => {
+                    showSuccess(nameVal, nicknameVal);
+                }, 900);
+            }
 
-    function showSuccess(name, nickname) {
-      document.getElementById('form-content').classList.add('hide');
-      const screen = document.getElementById('success-screen');
-      screen.classList.add('show');
+            function showSuccess(name, nickname) {
+                document.getElementById('form-content').classList.add('hide');
+                const screen = document.getElementById('success-screen');
+                screen.classList.add('show');
 
-      const display = nickname ? `${name} · "${nickname}"` : name;
-      document.getElementById('success-name').textContent = display;
-      document.getElementById('success-msg').textContent =
-        nickname
-          ? `Bem-vindo à mesa, ${nickname}. Que os dados estejam ao seu favor.`
-          : `Bem-vindo à mesa, ${name}. Que os dados estejam ao seu favor.`;
+                const display = nickname ? `${name} · "${nickname}"` : name;
+                document.getElementById('success-name').textContent = display;
+                document.getElementById('success-msg').textContent =
+                    nickname
+                    ? `Bem-vindo à mesa, ${nickname}. Que os dados estejam ao seu favor.`
+                    : `Bem-vindo à mesa, ${name}. Que os dados estejam ao seu favor.`;
 
-      // Redireciona após animação (2.5s da barra + 0.6s delay + 0.3s margem)
-      setTimeout(() => {
-        // window.location.href = '/mesa/';  ← descomente no Django
-        console.log('Redirecionando...', { name, nickname });
-      }, 3400);
-    }
-  </script>
-</body>
+                // Redireciona após animação (2.5s da barra + 0.6s delay + 0.3s margem)
+                setTimeout(() => {
+                    // window.location.href = '/mesa/';  ← descomente no Django
+                    console.log('Redirecionando...', { name, nickname });
+                }, 3400);
+            }
+
+            function togglePassword() {
+                const input  = document.getElementById('input-password');
+                const icon   = document.getElementById('eye-icon');
+                const isHidden = input.type === 'password';
+
+                input.type = isHidden ? 'text' : 'password';
+
+                // Troca o ícone: olho aberto ↔ olho fechado
+                icon.innerHTML = isHidden
+                    ? `<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
+       <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
+       <line x1="1" y1="1" x2="23" y2="23"/>`
+                    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+       <circle cx="12" cy="12" r="3"/>`;
+            }
+        </script>
+    </body>
 </html>
