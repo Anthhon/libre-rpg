@@ -7,13 +7,12 @@ Nosso objetivo é fornecer um conjunto eficiente e acessível de ferramentas par
 
 ## Roadmap
 
-- [ ] Sistema de cadastro de usuários (mestres e jogadores)
-- [ ] Perfil de usuário com configurações básicas
+- [ ] Perfil de usuário com configurações básicas (Em progresso...)
 - [ ] Chat ao vivo com WebSockets para interação em tempo real
 - [ ] Rolagem de dados no chat (pública e privada)
+- [ ] Visualização e edição de fichas de personagem
 - [ ] Compartilhamento de arquivos relacionados à campanha
 - [ ] Soundboard controlada pelo mestre
-- [ ] Visualização e edição de fichas de personagem
 - [ ] Visualizador de mapas da campanha
 - [ ] Interface modular: personalização de abas e janelas (reorganização e redimensionamento)
 
