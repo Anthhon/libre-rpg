@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from PIL import Image
 
 
 class Profile(models.Model):
@@ -28,6 +29,16 @@ class Profile(models.Model):
             upload_to='media/profile_picture/',
             verbose_name="Foto do usuário",
             )
+
+    def save(self):
+        super().save()  # Saves image as it is first
+
+        if self.profile_picture: # Avoid trying to resize photo when deleting it
+            img = Image.open(self.profile_picture.path)
+            if img.height > 100 or img.width > 100:
+                new_img = (100, 100)
+                img.thumbnail(new_img, Image.LANCZOS)
+                img.save(self.profile_picture.path, optimize=True)  # Save new image in same path
 
     class Meta:
         verbose_name = 'Perfis'

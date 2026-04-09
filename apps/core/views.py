@@ -34,7 +34,7 @@ def context_get(request, page_name):
 
 @login_required(login_url="login")
 def configurations_render(request):
-    context = context_get(request, 'configuration')
+    context = context_get(request, 'config')
     return render(request, "configurations.html", context)
 
 

@@ -305,7 +305,7 @@ SIDEBAR
     white-space: nowrap;
 }
 
-.avatar {
+.avatar img {
     width: 34px;
     height: 34px;
     border-radius: 50%;
@@ -318,7 +318,7 @@ SIDEBAR
     font-weight: 700;
     color: #fff;
     flex-shrink: 0;
-    border: 2px solid var(--border-glow);
+    border: 2px solid var(--accent-gold);
 }
 
 .player-info { overflow: hidden; }

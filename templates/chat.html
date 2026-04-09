@@ -24,15 +24,22 @@
         <div class="msg">
             <div class="msg-header">
                 {# TODO: Create random message color system to each user in chat #}
-                <span class="msg-author c-ember">[[USERNAME]]</span>
-                <span class="msg-time">[[MESSAGE TIME]]</span>
+                {% if profile.nickname %}
+                <span class="msg-author c-ember">{{ profile.nickname}}</span>
+                {% else %}
+                <span class="msg-author c-ember">{{ profile.user.username}}</span>
+                {% endif %}
             </div>
             <div class="msg-body">[[MESSAGE TEXT CONTENT]]</div>
         </div>
 
         <div class="msg msg-roll">
             <div class="msg-header">
-                <span class="msg-author c-arcane">[[USERNAME]]</span>
+                {% if profile.nickname %}
+                <span class="msg-author c-ember">{{ profile.nickname}}</span>
+                {% else %}
+                <span class="msg-author c-ember">{{ profile.user.username}}</span>
+                {% endif %}
                 <span class="msg-time">[[MESSAGE TIME]]</span>
                 <span style="margin-left:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent-gold); background:rgba(196,160,92,0.1); border:1px solid rgba(196,160,92,0.2); padding:1px 6px; border-radius:4px;">🎲 rolou dados</span>
             </div>
