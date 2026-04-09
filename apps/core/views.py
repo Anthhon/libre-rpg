@@ -1,35 +1,56 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from apps.core.forms import LoginForm
 from django.contrib.auth.decorators import login_required
+from apps.core.forms import LoginForm
+from apps.core.models import Profile
+from django.contrib.sessions.models import Session
+from django.utils import timezone
 
 
-@login_required
+# FIXME: Check a solid way to count ONLY authenticated users
+def logged_users_count():
+    # Get all (non expired) active sessions
+    active_sessions = Session.objects.filter(expire_date__gte=timezone.now())
+
+    # Return count of active_sessions
+    return len(active_sessions) - 1
+
+
+def context_get(request, page_name):
+    user = request.user
+    user_profile = Profile.objects.filter(user=user).first()
+    users_count = logged_users_count()
+
+    context = {
+            'profile': user_profile,
+            'users_count': users_count,
+            'page_name': page_name,
+            }
+    print(f'content: {context}')
+
+    return context
+
+
+@login_required(login_url="login")
 def configurations_render(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-
-    return render(request, "configurations.html")
+    context = context_get(request, 'configuration')
+    return render(request, "configurations.html", context)
 
 
-@login_required
+@login_required(login_url="login")
 def chat_render(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-
-    return render(request, "chat.html")
+    context = context_get(request, 'chat')
+    return render(request, "chat.html", context)
 
 
-@login_required
+@login_required(login_url="login")
 def dashboard_render(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-
-    return render(request, "dashboard.html")
+    context = context_get(request, 'dashboard')
+    return render(request, "dashboard.html", context)
 
 
-@login_required
+@login_required(login_url="login")
 def logout_user(request):
     logout(request)
     return redirect('login')

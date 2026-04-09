@@ -255,6 +255,14 @@ SIDEBAR
     box-shadow: 0 0 8px var(--accent-gold);
 }
 
+.nav-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    gap: 12px;
+}
+
 .nav-icon {
     width: 20px;
     height: 20px;

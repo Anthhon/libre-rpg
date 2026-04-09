@@ -8,7 +8,8 @@ class Profile(models.Model):
     user = models.OneToOneField(
             User,
             on_delete=models.CASCADE,
-            related_name='Perfil'
+            related_name='Perfil',
+            unique=True,
     )
     created = models.DateTimeField(
             auto_now_add=True,
