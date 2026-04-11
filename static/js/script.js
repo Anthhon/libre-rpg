@@ -1,31 +1,11 @@
-// Generate stars VFX in login form
-(function generateStars() {
-    const container = document.getElementById('stars');
-    const configs = [
-        { count: 40, minSize: 1, maxSize: 1.5, minOp: 0.03, maxOp: 0.2, minDur: 3, maxDur: 6 },
-        { count: 20, minSize: 1.5, maxSize: 2.5, minOp: 0.05, maxOp: 0.35, minDur: 4, maxDur: 8 },
-        { count: 8,  minSize: 2,   maxSize: 3.5, minOp: 0.08, maxOp: 0.5,  minDur: 5, maxDur: 10 },
-    ];
-    configs.forEach(({ count, minSize, maxSize, minOp, maxOp, minDur, maxDur }) => {
-        for (let i = 0; i < count; i++) {
-            const s = document.createElement('div');
-            s.className = 'star';
-            const size = minSize + Math.random() * (maxSize - minSize);
-            s.style.cssText = `
-            width:${size}px; height:${size}px;
-            left:${Math.random()*100}%; top:${Math.random()*100}%;
-            --min-op:${minOp}; --max-op:${maxOp};
-            --dur:${(minDur + Math.random()*(maxDur-minDur)).toFixed(1)}s;
-            --delay:-${(Math.random()*maxDur).toFixed(1)}s;
-          `;
-            container.appendChild(s);
-        }
-    });
-})();
+// Toggle Sidebar
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+}
 
 // Toggle password visibility in login form
 function togglePassword() {
-    const input  = document.getElementById('input-password');
+    const input  = document.getElementById('id_password');
     const icon   = document.getElementById('eye-icon');
     const isHidden = input.type === 'password';
 

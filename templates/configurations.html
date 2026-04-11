@@ -10,23 +10,20 @@
         {# Appearence options #}
         <div class="config-section">
             <div class="config-section-header">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-arcane)">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M20.188 10.934l-1.383-.8a6.952 6.952 0 000-4.268l1.383-.8A1 1 0 0021 4.2V3.8a1 1 0 00-1.5-.866L18.117 3.8A7 7 0 0012 1a7 7 0 00-6.117 2.8L4.5 2.934A1 1 0 003 3.8v.4a1 1 0 00.812.981l1.383.8a6.952 6.952 0 000 4.268l-1.383.8A1 1 0 003 12v.4a1 1 0 00.812.981l1.383.8A7 7 0 0012 23a7 7 0 006.117-9.8l1.383-.8A1 1 0 0021 11.6v-.4a1 1 0 00-.812-.981z"/>
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" style="color:var(--accent-arcane);">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9h.01M8.99 9H9m12 3a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM6.6 13a5.5 5.5 0 0 0 10.81 0H6.6Z"/>
                 </svg>
                 <span class="config-section-title">Aparência</span>
+                {# TODO: Implement buttons functions properly #}
+                <div class="config-desc">(NÃO IMPLEMENTADO)</div>
             </div>
 
             <div class="config-row">
                 <div class="config-info">
-                    <div class="config-label">Tema</div>
-                    <div class="config-desc">Esquema de cores da interface</div>
+                    <div class="config-label">Tema Escuro</div>
+                    <div class="config-desc">Ativar ou desativar o tema escuro.</div>
                 </div>
-                <div class="theme-options">
-                    <div class="theme-opt theme-dark active" title="Escuro" onclick="setTheme('dark', this)"></div>
-                    <div class="theme-opt theme-light" title="Claro" onclick="setTheme('light', this)"></div>
-                    <div class="theme-opt theme-blood" title="Sangue" onclick="setTheme('blood', this)"></div>
-                </div>
+                <div class="toggle-switch on" onclick=""></div>
             </div>
 
             <div class="config-row">
@@ -59,11 +56,12 @@
         {# Sessão #}
         <div class="config-section">
             <div class="config-section-header">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-gold)">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12 6 12 12 16 14"/>
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" style="color:var(--accent-gold)">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M20 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6h-2m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4"/>
                 </svg>
-                <span class="config-section-title">Sessão</span>
+                <span class="config-section-title">Preferências</span>
+                {# TODO: Implement buttons functions properly #}
+                <div class="config-desc">(NÃO IMPLEMENTADO)</div>
             </div>
 
             <div class="config-row">
@@ -102,26 +100,28 @@
         {# Conexão #}
         <div class="config-section">
             <div class="config-section-header">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-ice)">
-                    <path d="M1 6l10.5 6L22 6M1 6v12l10.5 6L22 18V6M1 6l10.5-6L22 6"/>
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" style="color:var(--accent-ice)">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1M5 12h14M5 12a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1m-2 3h.01M14 15h.01M17 9h.01M14 9h.01"/>
                 </svg>
                 <span class="config-section-title">Conexão</span>
+                {# TODO: Implement buttons functions properly #}
+                <div class="config-desc">(NÃO IMPLEMENTADO)</div>
             </div>
 
             <div class="config-row">
                 <div class="config-info">
-                    <div class="config-label">Endereço do Servidor</div>
+                    <div class="config-label">Endereço Global do Servidor</div>
                     <div class="config-desc">IP do mestre para esta sessão</div>
                 </div>
-                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent-ice);">192.168.1.42:8000</span>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent-ice);">XXX.XXX.XXX.XXX:PPPP</span>
             </div>
 
             <div class="config-row">
                 <div class="config-info">
-                    <div class="config-label">Túnel Público (Cloudflare)</div>
-                    <div class="config-desc">Acesso externo sem CGNAT</div>
+                    <div class="config-label">Endereço Local do Servidor</div>
+                    <div class="config-desc">IP desta máquina na sessão</div>
                 </div>
-                <div class="toggle-switch" onclick="this.classList.toggle('on')"></div>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent-ice);">XXX.XXX.XXX.XXX:PPPP</span>
             </div>
         </div>
     </div>

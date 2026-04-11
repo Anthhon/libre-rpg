@@ -1,3 +1,6 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+
 /* ═══════════════════════════════════════
 TOKENS & THEMES
 ═══════════════════════════════════════ */
@@ -162,7 +165,7 @@ SIDEBAR
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 10px;
     color: #4caf82;
     background: rgba(76,175,130,0.1);
@@ -199,7 +202,7 @@ SIDEBAR
 }
 
 .nav-section-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 9px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -279,7 +282,7 @@ SIDEBAR
 
 .nav-badge {
     margin-left: auto;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 9px;
     background: var(--accent-ember);
     color: #fff;
@@ -522,7 +525,7 @@ PANEL: MESA
 .map-badge {
     display: inline-block;
     margin-top: 14px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--accent-ember);
@@ -558,7 +561,7 @@ PANEL: MESA
 
 .online-count {
     margin-left: auto;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 10px;
     color: #4caf82;
     display: flex;
@@ -610,7 +613,7 @@ PANEL: MESA
 }
 
 .msg-time {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 9px;
     color: var(--text-muted);
 }
@@ -637,7 +640,7 @@ PANEL: MESA
 }
 
 .roll-notation {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 11px;
     color: var(--text-muted);
     background: var(--bg-surface);
@@ -664,7 +667,7 @@ PANEL: MESA
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 11px;
     font-weight: 500;
     color: var(--text-primary);
@@ -704,7 +707,7 @@ PANEL: MESA
 }
 
 .msg-system .msg-body {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 10px;
     letter-spacing: 0.05em;
     color: var(--text-muted);
@@ -733,7 +736,7 @@ PANEL: MESA
 }
 
 .dice-chip {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 10px;
     padding: 4px 10px;
     border-radius: 20px;
@@ -886,7 +889,7 @@ PANEL: FICHA
 }
 
 .tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 10px;
     letter-spacing: 0.08em;
     padding: 3px 10px;
@@ -915,7 +918,7 @@ PANEL: FICHA
 }
 
 .stat-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 8px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -932,7 +935,7 @@ PANEL: FICHA
 }
 
 .stat-mod {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 11px;
     color: var(--accent-gold);
     margin-top: 2px;
@@ -1072,7 +1075,7 @@ PANEL: CONFIGURAÇÕES
 
 .config-section-title {
     font-family: 'Cinzel', serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.1em;
     color: var(--text-primary);
@@ -1091,16 +1094,16 @@ PANEL: CONFIGURAÇÕES
 .config-info { flex: 1; }
 
 .config-label {
-    font-family: 'Cinzel', serif;
-    font-size: 13px;
-    font-weight: 600;
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    font-weight: 400;
     color: var(--text-primary);
 }
 
 .config-desc {
-    font-size: 13px;
+    font-size: 12px;
+    font-family: 'Jost', sans-serif;
     color: var(--text-muted);
-    font-style: italic;
     margin-top: 2px;
 }
 
@@ -1179,7 +1182,7 @@ PANEL: CONFIGURAÇÕES
     color: var(--text-primary);
     padding: 7px 12px;
     border-radius: 7px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 11px;
     cursor: pointer;
     outline: none;
@@ -1414,9 +1417,9 @@ ORNAMENTO SUPERIOR
 }
 
 .logo-text {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 22px;
-    font-weight: 700;
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    font-weight: 800;
     letter-spacing: 0.12em;
     color: var(--gold);
     text-shadow: 0 0 30px rgba(196,160,92,0.3);
@@ -1500,8 +1503,8 @@ FORM
 }
 
 .label-text {
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -1515,7 +1518,7 @@ FORM
 }
 
 .label-optional {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 9px;
     letter-spacing: 0.08em;
     color: var(--text-muted);
@@ -1581,6 +1584,7 @@ FORM
 
 .field-hint {
     font-size: 13px;
+    font-family: "Jost", sans-serif;
     color: var(--text-muted);
     font-style: italic;
     margin-top: 6px;
@@ -1591,7 +1595,7 @@ FORM
 .field-hint.error-hint {
     color: var(--error);
     font-style: normal;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 11px;
 }
 
@@ -1735,7 +1739,7 @@ FOOTER DO CARD
 }
 
 .footer-text {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--text-muted);
@@ -1790,7 +1794,7 @@ TELA DE SUCESSO
 }
 
 .success-redirect {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Jost", sans-serif;
     font-size: 11px;
     color: var(--text-muted);
     margin-top: 20px;
