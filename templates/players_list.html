@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="userlist-wrap">
+    {# Header #}
+    <div class="userlist-header">
+        <div class="userlist-header-left">
+            <div class="panel-title">Aventureiros</div>
+            <div class="panel-subtitle">Todos os jogadores conectados a esta campanha</div>
+        </div>
+        <div class="userlist-header-right">
+            <div class="userlist-search-wrap">
+                <svg class="userlist-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text"
+                       class="userlist-search"
+                       id="userlist-search"
+                       placeholder="Buscar aventureiro..."
+                       oninput="filterUsers(this.value)"
+                       autocomplete="off"
+                       />
+            </div>
+            <div class="userlist-count-badge">
+                <span id="visible-count">{{ users|length }}</span> / {{ users|length }}
+            </div>
+        </div>
+    </div>
+
+    {# Divider #}
+    <div class="userlist-divider">
+        <div class="userlist-divider-line"></div>
+        <div class="userlist-divider-diamond"></div>
+        <div class="userlist-divider-line"></div>
+    </div>
+
+    {# Filter tabs #}
+    <div class="userlist-filters">
+        <button class="filter-tab active" onclick="setFilter('all', this)">
+            Todos
+            <span class="filter-count">{{ users|length }}</span>
+        </button>
+        {# TODO: Implement filters by masters/players #}
+        {% comment %}
+        <button class="filter-tab" onclick="setFilter('master', this)">
+            Mestres
+            <span class="filter-count">{{ masters_count|default:"0" }}</span>
+        </button>
+        <button class="filter-tab" onclick="setFilter('player', this)">
+            Jogadores
+            <span class="filter-count">{{ players_count|default:"0" }}</span>
+        </button>
+        {% endcomment %}
+        <button class="filter-tab" onclick="setFilter('online', this)">
+            <span class="filter-online-dot"></span>
+            Online
+        </button>
+    </div>
+
+    {# Grid #}
+    <div class="userlist-grid" id="userlist-grid">
+
+        {% for profile in users_list %}
+        <div class="user-card"
+             data-name="{{ profile.user.username|lower }} {{ profile.nickname|lower|default:'' }}"
+             {#TODO: Implement master/player tag#}
+             {% comment %}
+             data-role="{% if profile.is_master %}master{% else %}player{% endif %}"
+             {% endcomment %}
+             data-online="{% if profile.is_online %}true{% else %}false{% endif %}"
+             style="animation-delay: {{ forloop.counter0 }}00ms"
+             >
+             {# Top accent line for admins #}
+             <div class="user-card-accent {% if profile.user.is_staff %}accent-gold{% else %}accent-arcane{% endif %}"></div>
+
+             {# Status dot #}
+             <div class="user-card-status {% if profile.is_online %}status-online{% else %}status-offline{% endif %}"></div>
+
+             {# Avatar #}
+             <div class="user-card-avatar-wrap">
+                 <div class="user-card-avatar {% if profile.is_master %}avatar-master{% endif %}">
+                     {% if profile.profile_picture %}
+                     <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" />
+                     {% else %}
+                     <span>{{ profile.user.username|first|upper }}</span> {# First letter name in case doesn't have photo#}
+                     {% endif %}
+                 </div>
+                 {# TODO: Implement masters custom icon #}
+                 {% comment %}
+                 {% if profile.is_master %}
+                 <div class="master-crown" title="Mestre">
+                     <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                         <path d="M2 19h20v2H2zM2 6l5 8 5-6 5 6 5-8v11H2z"/>
+                     </svg>
+                 </div>
+                 {% endif %}
+                 {% endcomment %}
+             </div>
+
+             {# Info #}
+             <div class="user-card-info">
+                 <div class="user-card-name">
+                     {% if profile.nickname %}
+                     {{ profile.nickname }}
+                     {% else %}
+                     {{ profile.user.username }}
+                     {% endif %}
+                 </div>
+                 {% if profile.nickname %}
+                 <div class="user-card-username">@{{ profile.user.username }}</div>
+                 {% endif %}
+
+                 <div class="user-card-tags">
+                     {# TODO: Implement 'is_master' tag properly #}
+                     <span class="user-tag {% if profile.is_master %}tag-gold{% else %}tag-arcane{% endif %}">
+                         {% if profile.is_master %}Mestre{% else %}Jogador{% endif %}
+                     </span>
+                     {% if profile.user.is_staff %}
+                     <span class="user-tag tag-ember">Admin</span>
+                     {% endif %}
+                 </div>
+             </div>
+
+             {# Stats row #}
+             <div class="user-card-stats">
+                 <div class="user-stat">
+                     <div class="user-stat-val {% if profile.is_online %}val-online{% endif %}">
+                         {% if profile.is_online %}Online{% else %}Offline{% endif %}
+                     </div>
+                     <div class="user-stat-label">Status</div>
+                 </div>
+             </div>
+
+             {# Hover overlay #}
+             <div class="user-card-glow"></div>
+        </div>
+        {% empty %}
+        <div class="userlist-empty" id="userlist-empty">
+            <div class="userlist-empty-icon">⚔️</div>
+            <div class="userlist-empty-title">Nenhum aventureiro encontrado</div>
+            <div class="userlist-empty-sub">A guilda aguarda novos membros</div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {# Empty search state (hidden by default) #}
+    <div class="userlist-empty" id="search-empty" style="display:none;">
+        <div class="userlist-empty-icon">🔍</div>
+        <div class="userlist-empty-title">Nenhum resultado</div>
+        <div class="userlist-empty-sub">Tente outro nome ou apelido</div>
+    </div>
+
+</div>
+{% endblock %}

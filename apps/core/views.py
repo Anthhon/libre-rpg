@@ -8,24 +8,17 @@ from django.contrib.sessions.models import Session
 from django.utils import timezone
 
 
-# FIXME: Check a solid way to count ONLY authenticated users
-def logged_users_count():
-    # Get all (non expired) active sessions
-    active_sessions = Session.objects.filter(expire_date__gte=timezone.now())
-
-    # Return count of active_sessions
-    return len(active_sessions) - 1
-
-
 def context_get(request, page_name):
     user = request.user
     user_profile = Profile.objects.filter(user=user).first()
-    users_count = logged_users_count()
+    users = Profile.objects.all()
+    users_online = Profile.objects.filter(is_online=True).count()
 
     context = {
             'profile': user_profile,
-            'users_count': users_count,
+            'users_count': users_online,
             'page_name': page_name,
+            'users_list': users,
             }
     print(f'content: {context}')
 
@@ -45,13 +38,30 @@ def chat_render(request):
 
 
 @login_required(login_url="login")
+def players_list_render(request):
+    context = context_get(request, 'players_list')
+    return render(request, "players_list.html", context)
+
+
+@login_required(login_url="login")
 def dashboard_render(request):
     context = context_get(request, 'dashboard')
     return render(request, "dashboard.html", context)
 
 
+def update_user_online_status(user):
+    try:
+        profile = Profile.objects.get(user=user)
+        profile.is_online = not profile.is_online  # Toggle 'is_online' status
+        profile.save()
+    except Profile.DoesNotExist:
+        # TODO: Implement proper error handling
+        print("[ERROR] Could not find 'profile' related to 'user'")
+
+
 @login_required(login_url="login")
 def logout_user(request):
+    update_user_online_status(request.user)
     logout(request)
     return redirect('login')
 
@@ -71,17 +81,17 @@ def login_render(request):
         if user is not None:
             # User exists and password is correct
             login(request, user)
+            update_user_online_status(user)
             return redirect('chat')
         else:
             # Authentication failed
             if username and password:
                 # Check if user exists
                 user_exists = User.objects.filter(username=username).exists()
-
                 if user_exists:
                     # User exists but password is wrong
                     # TODO: Implement proper error message
-                    print("ERROR: User exists but password is wrong")
+                    print("[ERROR] User exists but password is wrong")
                 else:
                     # Create new user
                     # Warning: this also creates a new profile, since
