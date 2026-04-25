@@ -8,6 +8,9 @@ from django.contrib.sessions.models import Session
 from django.utils import timezone
 
 
+# Variable 'page_name' is used by html django pre-processor
+# which uses this value passed into context, to generate dynamic 
+# sidebar buttons visuals when users change views
 def context_get(request, page_name):
     user = request.user
     user_profile = Profile.objects.filter(user=user).first()
@@ -36,6 +39,10 @@ def chat_render(request):
     context = context_get(request, 'chat')
     return render(request, "chat.html", context)
 
+@login_required(login_url="login")
+def character_sheet_render(request):
+    context = context_get(request, 'char_sheet')
+    return render(request, "character_sheet.html", context)
 
 @login_required(login_url="login")
 def players_list_render(request):

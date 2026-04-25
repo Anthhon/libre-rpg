@@ -12,6 +12,7 @@ urlpatterns = [
     path('logout/', views.logout_user, name='logout'),
 
     path('chat/', views.chat_render, name='chat'),
+    path('char_sheet/', views.character_sheet_render, name='char_sheet'),
     path('players/', views.players_list_render, name='players_list'),
 
     path('config/', views.configurations_render, name='config'),

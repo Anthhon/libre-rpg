@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+{# ═══════════════ CHARACTER SHEET ═══════════════ #}
+<div class="panel active" id="panel-ficha">
+    <div class="ficha-panel">
+        <div class="config-header">
+            <div class="panel-title">Ficha do Personagem</div>
+            <div class="panel-subtitle">D&D 5ª Edição — Visualização e exportação</div>
+        </div>
+
+        <div class="char-hero">
+            {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}" alt="user_picture" class="char-avatar-lg">
+            {% else %}
+            <img src="{{MEDIA_URL}}/img/default_picture.webp" alt="user_picture" class="char-avatar-lg">
+            {% endif %}
+            <div class="char-info">
+                {% if profile.nickname %}
+                <div class="char-name">{{ profile.nickname }}</div>
+                {% else %}
+                <div class="char-name">{{ profile.user.username }}</div>
+                {% endif %}
+                <div class="char-tags">
+                    <span class="tag gold">Nível [[LEVEL]]</span>
+                    <span class="tag arcane">[[CLASSE]] · [[CLASS DESCRIPTION]]</span>
+                    <span class="tag">[[RACE]]</span>
+                </div>
+                <div class="char-stats">
+                    <div class="stat-box">
+                        {# TODO: Implement different visuals to better/worse modifiers #}
+                        {# <div class="stat-mod" style="color:var(--accent-ice)">+4</div> #}
+                        {# <div class="stat-mod" style="color:var(--accent-ember)">+4</div> #}
+                        <div class="stat-label">FORÇA</div>
+                        <div class="stat-val">[[VAL]]</div>
+                        <div class="stat-mod">[[MODIFIER]]</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">DESTREZA</div>
+                        <div class="stat-val">[[VAL]]</div>
+                        <div class="stat-mod">[[MODIFIER]]</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">CONSTITUIÇÃO</div>
+                        <div class="stat-val">[[VAL]]</div>
+                        <div class="stat-mod">[[MODIFIER]]</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">INTELIGÊNCIA</div>
+                        <div class="stat-val">[[VAL]]</div>
+                        <div class="stat-mod">[[MODIFIER]]</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">SABEDORIA</div>
+                        <div class="stat-val">[[VAL]]</div>
+                        <div class="stat-mod">[[MODIFIER]]</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">CARISMA</div>
+                        <div class="stat-val">[[VAL]]</div>
+                        <div class="stat-mod">[[MODIFIER]]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="pdf-section">
+            <div class="pdf-toolbar">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-ember)">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                <span class="pdf-toolbar-title">[[NOME DO ARQUIVO]].pdf</span>
+                <div class="pdf-actions">
+                    <button class="btn btn-outline">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        Editar Ficha
+                    </button>
+                    <button class="btn btn-primary">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                        </svg>
+                        Baixar PDF
+                    </button>
+                </div>
+            </div>
+            <div class="pdf-preview">
+                <div class="pdf-preview-inner">
+                    <div class="icon">📄</div>
+                    <p>Visualizador de PDF</p>
+                    <p style="font-size:11px; margin-top:4px; color:var(--text-muted);">O PDF da ficha será<br>renderizado aqui</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
