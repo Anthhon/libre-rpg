@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Custom apps
     'apps.core',
+    'apps.campaigns',
 
     # Utility
 ]
