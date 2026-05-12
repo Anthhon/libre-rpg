@@ -3,11 +3,11 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Campaign(models.Model):
-    active = models.BooleanField(  # Used to deactive campaigns manually
-            default=False,
-            null=False,
+    active = models.BooleanField(
+            default=True,
+            blank=True,
             )
-    created = models.DateTimeField(
+    created_at = models.DateTimeField(
             auto_now_add=True,
             verbose_name="Data de criação"
             )
@@ -15,7 +15,7 @@ class Campaign(models.Model):
             blank=True,  # Optional
             null=True,
             upload_to='media/campaign/cover/',
-            verbose_name="Foto do usuário",
+            verbose_name="Capa da campanha",
             )
     name = models.CharField(
             max_length=32,
@@ -50,6 +50,4 @@ class Campaign(models.Model):
         verbose_name_plural = 'Campanha'
 
     def __str__(self):
-        if self.nickname:
-            return f"{self.user.username} - {self.nickname}"
-        return f"{self.user.username}"
+        return f"{self.name} [{self.created_at}]"

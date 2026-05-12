@@ -72,3 +72,43 @@ function applyFilters(query, role) {
         searchEmpty.style.display = 'none';
     }
 }
+
+// Campaigns List /////////////////////////////////////////////////////////////
+
+// Cover image preview
+const coverInput = document.querySelector('input[type="file"]');
+const coverPreview = document.getElementById('cover-preview');
+const coverOverlay = document.getElementById('cover-overlay');
+const coverIcon = document.getElementById('cover-placeholder-icon');
+const coverText = document.getElementById('cover-upload-text');
+
+coverInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        coverPreview.src = e.target.result;
+        coverPreview.classList.add('visible');
+        coverIcon.style.display = 'none';
+        coverText.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+});
+
+// Drag & drop visual feedback
+const uploadArea = document.getElementById('cover-upload-area');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', () => uploadArea.classList.remove('dragover'));
+
+// Description char counter
+const descField = document.getElementById('{{ new_campaign_form.description.id_for_label }}');
+const descCounter = document.getElementById('desc-counter');
+
+if (descField && descCounter) {
+    descField.addEventListener('input', function () {
+        const len = this.value.length;
+        descCounter.textContent = `${len} / 128`;
+        descCounter.classList.toggle('warn', len > 110);
+    });
+}

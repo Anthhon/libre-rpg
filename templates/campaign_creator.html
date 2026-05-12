@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LIBRE RPG — Nova Campanha</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body style="overflow: auto; align-items: flex-start;">
+    <div class="bg-vignette"></div>
+    <div class="bg-lines"></div>
+    <div class="stars" id="stars"></div>
+    <div class="noise"></div>
+
+    <div class="create-wrap">
+        <a class="back-link" href="{% url 'campaign_list' %}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 5 5 12 12 19"/>
+            </svg>
+            Voltar às campanhas
+        </a>
+        <div class="card-wrap">
+            <div class="card">
+                {# Header ornament #}
+                <div class="ornament">
+                    <div class="logo-text">Nova Campanha</div>
+                    <div class="logo-sub">Forje sua saga — defina nome, cenário e mestre</div>
+                </div>
+                {# Divider #}
+                <div class="divider-ornament">
+                    <div class="divider-line"></div>
+                    <div class="divider-diamond"></div>
+                    <span class="welcome-text">Criação</span>
+                    <div class="divider-diamond"></div>
+                    <div class="divider-line"></div>
+                </div>
+
+                {# Non-field errors #}
+                {% if new_campaign_form.non_field_errors %}
+                <ul class="non-field-errors errorlist">
+                    {{ new_campaign_form.non_field_errors }}
+                </ul>
+                {% endif %}
+
+                <form class="form" method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    {# Cover image upload #}
+                    <div class="field">
+                        <div class="field-label">
+                            <span class="label-text">Imagem de Capa</span>
+                            <span class="label-optional">opcional</span>
+                        </div>
+                        <div class="cover-upload-area" id="cover-upload-area">
+                            {{ new_campaign_form.cover_image }}
+                            <img class="cover-preview" id="cover-preview" src="" alt="Preview da capa">
+                            {# TODO: Enable switch images after selecting one #}
+                            {% comment %}
+                            <div class="cover-upload-overlay has-image" id="cover-overlay">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                                Trocar imagem
+                            </div>
+                            {% endcomment %}
+                            <svg class="cover-upload-icon" id="cover-placeholder-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                            <span class="cover-upload-text" id="cover-upload-text">Clique ou arraste uma imagem</span>
+                            <span class="cover-upload-hint">PNG, JPG, WEBP — recomendado 1280×720</span>
+                        </div>
+                        {% if new_campaign_form.cover_image.errors %}
+                        <ul class="errorlist">{{ new_campaign_form.cover_image.errors }}</ul>
+                        {% endif %}
+                    </div>
+
+                    {# Campaign name #}
+                    <div class="field">
+                        <div class="field-label">
+                            <span class="label-text">Nome</span>
+                            <span class="label-required">*</span>
+                            <span class="label-char-limit">máx. 32</span>
+                        </div>
+                        <div class="input-wrap">
+                            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                <path d="M2 17l10 5 10-5"/>
+                                <path d="M2 12l10 5 10-5"/>
+                            </svg>
+                            {{ new_campaign_form.name }}
+                        </div>
+                        <div class="field-hint">Nome único para sua campanha</div>
+                        {% if new_campaign_form.name.errors %}
+                        <ul class="errorlist">{{ new_campaign_form.name.errors }}</ul>
+                        {% endif %}
+                    </div>
+
+                    {# Description #}
+                    <div class="field">
+                        <div class="field-label">
+                            <span class="label-text">Descrição</span>
+                            <span class="label-optional">opcional</span>
+                            <span class="label-char-limit">máx. 128</span>
+                        </div>
+                        {{ new_campaign_form.description }}
+                        <div class="field-counter" id="desc-counter">0 / 128</div>
+                        {% if new_campaign_form.description.errors %}
+                        <ul class="errorlist">{{ new_campaign_form.description.errors }}</ul>
+                        {% endif %}
+                    </div>
+
+                    {# Submit #}
+                    <div class="submit-wrap" style="margin-top: 10px;">
+                        <button type="submit" class="submit-btn" id="submit-btn">
+                            <span class="submit-text">Criar Campanha</span>
+                            <svg class="submit-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                </form>
+
+                <div class="card-footer">
+                    <div class="footer-line">
+                        <div class="footer-diamond"></div>
+                        <span class="footer-text">Você poderá editar a campanha após a criação</span>
+                        <div class="footer-diamond"></div>
+                    </div>
+                </div>
+
+            </div>{# /card #}
+        </div>
+    </div>{# /create-wrap #}
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

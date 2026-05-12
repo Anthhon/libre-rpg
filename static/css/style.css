@@ -2278,3 +2278,242 @@ a.icon-btn[title="Sair"]:hover {
     color: var(--text-muted);
     font-style: italic;
 }
+
+.create-wrap {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 52px 24px 80px;
+}
+
+/* Back link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 36px;
+    transition: color 0.2s;
+}
+
+.back-link:hover { color: var(--text-secondary); }
+
+.back-link svg { transition: transform 0.2s; }
+.back-link:hover svg { transform: translateX(-3px); }
+
+/* Card */
+.card-wrap {
+    width: 100%;
+    padding: 0;
+}
+
+.card {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 44px 40px 36px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+    0 0 0 1px rgba(196,160,92,0.06),
+    0 32px 64px rgba(0,0,0,0.6),
+    0 0 80px rgba(196,160,92,0.04) inset;
+    animation: cardReveal 0.8s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+/* Ornament + divider inherited from existing CSS */
+
+/* ── COVER UPLOAD ── */
+.cover-upload-area {
+    width: 100%;
+    height: 180px;
+    border: 1px dashed var(--border-glow);
+    border-radius: 10px;
+    background: var(--bg-input);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.25s;
+    position: relative;
+    overflow: hidden;
+}
+
+.cover-upload-area:hover {
+    border-color: var(--gold);
+    background: rgba(196,160,92,0.03);
+}
+
+.cover-upload-area.dragover {
+    border-color: var(--gold);
+    background: rgba(196,160,92,0.05);
+    box-shadow: 0 0 0 3px rgba(196,160,92,0.08);
+}
+
+.cover-upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.cover-preview {
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: none;
+    border-radius: 10px;
+}
+
+.cover-preview.visible { display: block; }
+
+.cover-upload-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8,10,15,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    gap: 8px;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+}
+
+.cover-upload-area:hover .cover-upload-overlay.has-image {
+    display: flex;
+}
+
+.cover-upload-icon {
+    color: var(--gold);
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.cover-upload-area:hover .cover-upload-icon { opacity: 0.9; }
+
+.cover-upload-text {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.cover-upload-hint {
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+/* ── FORM FIELDS ── */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.field { animation: fadeUp 0.7s ease both; }
+.field:nth-child(1) { animation-delay: 0.1s; }
+.field:nth-child(2) { animation-delay: 0.18s; }
+.field:nth-child(3) { animation-delay: 0.26s; }
+.field:nth-child(4) { animation-delay: 0.34s; }
+
+/* Textarea variant */
+.field-textarea {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 13px 16px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    color: var(--text-primary);
+    outline: none;
+    resize: vertical;
+    min-height: 90px;
+    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    letter-spacing: 0.01em;
+}
+
+.field-textarea::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.field-textarea:focus {
+    border-color: rgba(196,160,92,0.5);
+    background: rgba(196,160,92,0.03);
+    box-shadow: 0 0 0 3px rgba(196,160,92,0.06), 0 0 16px rgba(196,160,92,0.06) inset;
+}
+
+/* Char counter */
+.field-counter {
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 4px;
+    transition: color 0.2s;
+}
+
+.field-counter.warn { color: var(--accent-ember); }
+
+/* Django error list */
+.errorlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.errorlist li {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    color: var(--error);
+    margin-top: 5px;
+}
+
+/* Non-field errors */
+.non-field-errors {
+    background: rgba(196,80,58,0.08);
+    border: 1px solid rgba(196,80,58,0.25);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+}
+
+.non-field-errors li {
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    color: var(--error);
+}
+
+/* ── CHAR COUNT pill ── */
+.label-char-limit {
+    font-family: 'Jost', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 10px;
+}

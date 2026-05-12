@@ -39,10 +39,12 @@ def chat_render(request):
     context = context_get(request, 'chat')
     return render(request, "chat.html", context)
 
+
 @login_required(login_url="login")
 def character_sheet_render(request):
     context = context_get(request, 'char_sheet')
     return render(request, "character_sheet.html", context)
+
 
 @login_required(login_url="login")
 def players_list_render(request):
@@ -56,20 +58,20 @@ def dashboard_render(request):
     return render(request, "dashboard.html", context)
 
 
-def update_user_online_status(user):
+def update_user_online_status(user, status):
     try:
         profile = Profile.objects.get(user=user)
-        profile.is_online = not profile.is_online  # Toggle 'is_online' status
+        profile.is_online = status
         profile.save()
     except Profile.DoesNotExist:
         # TODO: Implement proper error handling
         print("[ERROR] Could not find 'profile' related to 'user'")
 
 
-@login_required(login_url="login")
 def logout_user(request):
-    update_user_online_status(request.user)
-    logout(request)
+    if request.user.is_authenticated:
+        update_user_online_status(request.user, False)
+        logout(request)
     return redirect('login')
 
 
@@ -88,7 +90,7 @@ def login_render(request):
         if user is not None:
             # User exists and password is correct
             login(request, user)
-            update_user_online_status(user)
+            update_user_online_status(user, True)
             return redirect('chat')
         else:
             # Authentication failed

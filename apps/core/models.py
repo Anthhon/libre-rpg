@@ -18,7 +18,7 @@ class Profile(models.Model):
             )
     created = models.DateTimeField(
             auto_now_add=True,
-            verbose_name="Data de criação"
+            verbose_name="Data de criação",
             )
     nickname = models.CharField(
             max_length=32,

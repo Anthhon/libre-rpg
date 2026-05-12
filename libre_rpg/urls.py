@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from apps.core import views
+from apps.campaigns.views import campaign_list_render, campaign_creator_render
 
 
 urlpatterns = [
@@ -10,6 +11,9 @@ urlpatterns = [
 
     path('', views.login_render, name='login'),
     path('logout/', views.logout_user, name='logout'),
+
+    path('campaign/list/', campaign_list_render, name='campaign_list'),
+    path('campaign/new/', campaign_creator_render, name='campaign_creator'),
 
     path('chat/', views.chat_render, name='chat'),
     path('char_sheet/', views.character_sheet_render, name='char_sheet'),
