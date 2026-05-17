@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import path
 from apps.core import views
 from apps.campaigns.views import campaign_list_render, campaign_creator_render
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 
 urlpatterns = [
@@ -20,4 +21,4 @@ urlpatterns = [
     path('campaign/<int:id>/players/', views.players_list_render, name='players_list'),
 
     path('campaign/<int:id>/config/', views.configurations_render, name='config'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + debug_toolbar_urls()

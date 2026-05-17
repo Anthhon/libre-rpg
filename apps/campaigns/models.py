@@ -1,7 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+from apps.core.models import Profile
 
-# Create your models here.
 class Campaign(models.Model):
     active = models.BooleanField(
             default=True,
@@ -31,13 +30,13 @@ class Campaign(models.Model):
             verbose_name="Descrição curta da campanha",
             )
     masters = models.ManyToManyField(
-            User,
+            Profile,
             blank=True,
             related_name='gmed_campaigns',
             verbose_name="Mestres",
             )
     players = models.ManyToManyField(
-            User,
+            Profile,
             blank=True,
             related_name='joined_campaigns',
             verbose_name="Jogadores",

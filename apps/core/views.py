@@ -10,76 +10,119 @@ from apps.campaigns.models import Campaign
 from django.shortcuts import get_object_or_404
 
 
-def update_user_online_status(user, status):
-    try:
-        profile = Profile.objects.get(user=user)
-        profile.is_online = status
-        profile.save()
-    except Profile.DoesNotExist:
-        # TODO: Implement proper error handling
-        print("[ERROR] Could not find 'profile' related to 'user'")
+def update_user_online_status(user: User, is_online: bool) -> None:
+    """
+    Update the online status of a user's profile.
+
+    Uses a single UPDATE query to avoid fetching the profile first.
+    If the profile does not exist, the error is logged but not raised,
+    assuming the post‑save signal creates it automatically.
+    """
+    updated_profile = Profile.objects.filter(user=user).update(is_online=is_online)
+    if not updated_profile:
+        logger.error("Profile not found for user %s when updating online status", user.username)
 
 
-# TODO: Modulate context_get better since not all pages will want all this info
-# Variable 'page_name' is used by html django pre-processor
-# which uses this value passed into context, to generate dynamic 
-# sidebar buttons visuals when users change views
-def context_get(request, page_name, campaign_pk):
-    user = request.user
-    user_profile = Profile.objects.filter(user=user).first()
-
-    users = Profile.objects.all()
-    users_online = Profile.objects.filter(is_online=True).count()
-
-    if campaign_pk != 0:
-        campaign = get_object_or_404(Campaign, id=campaign_pk)
-    else:
-        campaign = None
-
-    context = {
-            'profile': user_profile,
-            'users_count': users_online,
-            'page_name': page_name,
-            'users_list': users,
-            'campaign': campaign,
-            }
-    print(f'content: {context}')
-
-    return context
+def get_page_name(request):
+    """
+    Returns the current URL name to the template context,
+    useful for sidebar highlighting or body classes.
+    """
+    if not request.resolver_match:
+        return None
+    return request.resolver_match.url_name
 
 
-# FIXME: Configuration page not rendering correctly
+def get_user_profile(user):
+    """Returns user_profile objects for authenticated users"""
+    user_profile = Profile.get_from(user)
+    return user_profile
+
+
+def get_campaign(campaign_id: int = 0):
+    """Returns campaign object with prefetched (masters, players) data"""
+    if campaign_id == 0:
+        return None
+
+    campaign = Campaign.objects.prefetch_related('masters', 'players').get(id=campaign_id)
+    return campaign
+
+
 @login_required(login_url="login")
 def configurations_render(request, id):
-    context = context_get(request, 'config', id)
-    return render(request, "configurations.html", context)
+    profile = get_user_profile(request.user)
+    campaign = get_campaign(campaign_id=id)
+
+    # TODO: Get local and global ip and set display them
+
+    return render(request, "configurations.html", {
+        'profile': profile,
+        'campaign': campaign,
+        'page_name': get_page_name(request),
+        })
 
 
 @login_required(login_url="login")
 def chat_render(request, id):
-    context = context_get(request, 'chat', id)
-    return render(request, "chat.html", context)
+    profile = get_user_profile(request.user)
+    campaign = get_campaign(campaign_id=id)
+
+    return render(request, "chat.html", {
+        'profile': profile,
+        'campaign': campaign,
+        'page_name': get_page_name(request),
+        })
 
 
 @login_required(login_url="login")
 def character_sheet_render(request, id):
-    context = context_get(request, 'char_sheet', id)
-    return render(request, "character_sheet.html", context)
+    profile = get_user_profile(request.user)
+    campaign = get_campaign(campaign_id=id)
+
+    return render(request, "character_sheet.html", {
+        'profile': profile,
+        'campaign': campaign,
+        'page_name': get_page_name(request),
+        })
 
 
 @login_required(login_url="login")
 def players_list_render(request, id):
-    context = context_get(request, 'players_list', id)
-    return render(request, "players_list.html", context)
+    profile = get_user_profile(request.user)
+    campaign = get_campaign(campaign_id=id)
+
+    # Get all the current participants of the current campaign 
+    # with a 'is_master' flag to identify masters
+    masters_qs = campaign.masters.all()
+    players_qs = campaign.players.all()
+    players_list = []
+    for master in masters_qs:
+        players_list.append((master, True))
+    for player in players_qs:
+        players_list.append((player, False))
+
+    return render(request, "players_list.html", {
+        'profile': profile,
+        'campaign': campaign,
+        'players_list': players_list,
+        'page_name': get_page_name(request),
+        })
 
 
 @login_required(login_url="login")
 def dashboard_render(request, id):
-    context = context_get(request, 'dashboard', id)
-    return render(request, "dashboard.html", context)
+    profile = get_user_profile(request.user)
+    campaign = get_campaign(campaign_id=id)
+
+    return render(request, "dashboard.html", {
+        'profile': profile,
+        'campaign': campaign,
+        'page_name': get_page_name(request),
+        })
 
 
 def logout_user(request):
+    """Log out the current user and mark them as offline."""
     if request.user.is_authenticated:
         update_user_online_status(request.user, False)
         logout(request)
@@ -87,47 +130,63 @@ def logout_user(request):
 
 
 def login_render(request):
+    """
+    Handle login and automatic account creation.
+
+    - If the user is already authenticated, redirect to the campaign list.
+    - On POST: validate credentials; if they do not exist, create a new user.
+    - On GET: display the login form.
+    """
     if request.user.is_authenticated:
         return redirect('campaign_list')
 
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
-        username = request.POST.get('username')
+        username = request.POST.get('username').strip()
         password = request.POST.get('password')
 
-        # Try to authenticate first
-        user = authenticate(request, username=username, password=password)
+        # Check if any field is empty
+        if not username or not password:
+            form.add_error(None, "Both username and password are required.")
+            return render(request, "welcome.html", {'form': form})
 
+        # Attempt authentication (user exists and password is correct)
+        user = authenticate(request, username=username, password=password)
         if user is not None:
-            # User exists and password is correct
             login(request, user)
             update_user_online_status(user, True)
-            return redirect('chat')
-        else:
+            return redirect('campaign_list')
+
+        user_exists = User.objects.filter(username=username).exists()
+        if user_exists:
+            # User exists but password is incorrect
             # Authentication failed
             if username and password:
                 # Check if user exists
                 user_exists = User.objects.filter(username=username).exists()
                 if user_exists:
                     # User exists but password is wrong
-                    # TODO: Implement proper error message
-                    print("[ERROR] User exists but password is wrong")
+                    form.add_error('password', "Password must be at least 6 characters long.")
+                    return render(request, "welcome.html", {'form': form})
                 else:
-                    # Create new user
-                    # Warning: this also creates a new profile, since
-                    # the user model sends a signal to a 'post_save' type
-                    # receiver which get a new model in put the user on it
-                    user = User.objects.create_user(
-                            username=username,
-                            password=password
-                            )
-                    login(request, user)
-                    return redirect('chat')
-            else:
-                # TODO: Implement proper missing info message
-                print("ERROR: Fill all the fields before submiting it!")
+                    try:
+                        # Ensure minimum password length for new accounts
+                        if len(password) < 6:
+                            form.add_error('password', "Password must be at least 6 characters long.")
+                            return render(request, "welcome.html", {'form': form})
 
-            return render(request, "welcome.html", {'form': form})
+                        # Create new user
+                        # Warning: this also creates a new profile, since
+                        # the user model sends a signal to a 'post_save' type
+                        # receiver which get a new model in put the user on it
+                        user = User.objects.create_user(username=username, password=password)
+                        login(request, user)
+                        update_user_online_status(user, True)
+                        return redirect('campaign_list')
+                    except Exception as e:
+                        logger.exception("Failed to create user %s", username)
+                        form.add_error(None, "Unable to create new account. Please try again.", username)
+                        return render(request, "welcome.html", {'form': form})
     else:
         form = LoginForm()
 

@@ -9,16 +9,18 @@
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
     </head>
     <body>
-        {# ═══════════════ SIDEBAR ═══════════════ #}
+        {# SIDEBAR #}
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 {# Title text #}
                 <div class="logo">Libre<span> · </span>RPG</div>
-
-                {# Campaign main info (name/desc./status) #}
                 <div class="campaign-name">{{ campaign.name }}</div>
                 <div class="campaign-sub">{{ campaign.desc }}</div>
-                <div class="session-badge">[[STATUS DA CAMPANHA]]</div>
+                {% if campaign.active %}
+                <div class="session-badge session-online">ATIVA</div>
+                {% else %}
+                <div class="session-badge session-offline">DESATIVADA</div>
+                {% endif %}
             </div>
 
             <nav class="sidebar-nav">
@@ -101,9 +103,9 @@
             </div>
         </aside>
 
-        {# ═══════════════ MAIN ═══════════════ #}
+        {# MAIN #}
         <div class="main">
-            {# ═══════════════ TOPBAR ═══════════════ #}
+            {# TOPBAR #}
             <div class="topbar">
                 {# Toggle sidebar #}
                 <button class="toggle-btn" onclick="toggleSidebar()" title="Alternar barra lateral">
@@ -114,8 +116,8 @@
                     </svg>
                 </button>
 
-                <span class="topbar-title" id="topbar-title">[[NOME DA ABA]]</span>
-                <span class="topbar-breadcrumb" id="topbar-breadcrumb">[[DESCRIÇÃO DA ABA]]</span>
+                <span class="topbar-title" id="topbar-title">{% block panel_name %}{% endblock %}</span>
+                <span class="topbar-breadcrumb" id="topbar-breadcrumb">{% block panel_desc %}{% endblock %}</span>
 
                 <div class="topbar-actions">
                     <button class="icon-btn" title="Ajuda">
@@ -143,7 +145,7 @@
                 </div>
             </div>
 
-            {# ═══════════════ CONTENT ═══════════════ #}
+            {# CONTENT #}
             <div class="content">
                 {% block content %}
                 {% endblock %}

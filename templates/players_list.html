@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block panel_name %}Lista de jogadores{% endblock %}
+{% block panel_desc %}Visualize os jogadores conectados nesta campanha{% endblock %}
+
 {% block content %}
 <div class="userlist-wrap">
     {# Header #}
     <div class="userlist-header">
         <div class="userlist-header-left">
             <div class="panel-title">Aventureiros</div>
-            <div class="panel-subtitle">Todos os jogadores conectados a esta campanha</div>
         </div>
         <div class="userlist-header-right">
             <div class="userlist-search-wrap">
@@ -24,7 +26,7 @@
                        />
             </div>
             <div class="userlist-count-badge">
-                <span id="visible-count">{{ users|length }}</span> / {{ users|length }}
+                <span id="visible-count">{{ players_list|length }}</span> / {{ players_list|length }}
             </div>
         </div>
     </div>
@@ -62,34 +64,34 @@
     {# Grid #}
     <div class="userlist-grid" id="userlist-grid">
 
-        {% for profile in users_list %}
+        {% for player, is_master in players_list %}
         <div class="user-card"
-             data-name="{{ profile.user.username|lower }} {{ profile.nickname|lower|default:'' }}"
+             data-name="{{ player.user.username|lower }} {{ player.nickname|lower|default:'' }}"
              {#TODO: Implement master/player tag#}
              {% comment %}
-             data-role="{% if profile.is_master %}master{% else %}player{% endif %}"
+             data-role="{% if is_master %}master{% else %}player{% endif %}"
              {% endcomment %}
-             data-online="{% if profile.is_online %}true{% else %}false{% endif %}"
+             data-online="{% if player.is_online %}true{% else %}false{% endif %}"
              style="animation-delay: {{ forloop.counter0 }}00ms"
              >
              {# Top accent line for admins #}
-             <div class="user-card-accent {% if profile.user.is_staff %}accent-gold{% else %}accent-arcane{% endif %}"></div>
+             <div class="user-card-accent {% if player.user.is_staff %}accent-gold{% else %}accent-arcane{% endif %}"></div>
 
              {# Status dot #}
-             <div class="user-card-status {% if profile.is_online %}status-online{% else %}status-offline{% endif %}"></div>
+             <div class="user-card-status {% if player.is_online %}status-online{% else %}status-offline{% endif %}"></div>
 
              {# Avatar #}
              <div class="user-card-avatar-wrap">
-                 <div class="user-card-avatar {% if profile.is_master %}avatar-master{% endif %}">
-                     {% if profile.profile_picture %}
-                     <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" />
+                 <div class="user-card-avatar {% if is_master %}avatar-master{% endif %}">
+                     {% if player.profile_picture %}
+                     <img src="{{ player.profile_picture.url }}" alt="{{ player.user.username }}" />
                      {% else %}
-                     <span>{{ profile.user.username|first|upper }}</span> {# First letter name in case doesn't have photo#}
+                     <span>{{ player.user.username|first|upper }}</span> {# First letter name in case doesn't have photo#}
                      {% endif %}
                  </div>
                  {# TODO: Implement masters custom icon #}
                  {% comment %}
-                 {% if profile.is_master %}
+                 {% if is_master %}
                  <div class="master-crown" title="Mestre">
                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
                          <path d="M2 19h20v2H2zM2 6l5 8 5-6 5 6 5-8v11H2z"/>
@@ -102,22 +104,22 @@
              {# Info #}
              <div class="user-card-info">
                  <div class="user-card-name">
-                     {% if profile.nickname %}
-                     {{ profile.nickname }}
+                     {% if player.nickname %}
+                     {{ player.nickname }}
                      {% else %}
-                     {{ profile.user.username }}
+                     {{ player.user.username }}
                      {% endif %}
                  </div>
-                 {% if profile.nickname %}
-                 <div class="user-card-username">@{{ profile.user.username }}</div>
+                 {% if player.nickname %}
+                 <div class="user-card-username">@{{ player.user.username }}</div>
                  {% endif %}
 
                  <div class="user-card-tags">
                      {# TODO: Implement 'is_master' tag properly #}
-                     <span class="user-tag {% if profile.is_master %}tag-gold{% else %}tag-arcane{% endif %}">
-                         {% if profile.is_master %}Mestre{% else %}Jogador{% endif %}
+                     <span class="user-tag {% if is_master %}tag-gold{% else %}tag-arcane{% endif %}">
+                         {% if is_master %}Mestre{% else %}Jogador{% endif %}
                      </span>
-                     {% if profile.user.is_staff %}
+                     {% if player.user.is_staff %}
                      <span class="user-tag tag-ember">Admin</span>
                      {% endif %}
                  </div>
@@ -126,8 +128,8 @@
              {# Stats row #}
              <div class="user-card-stats">
                  <div class="user-stat">
-                     <div class="user-stat-val {% if profile.is_online %}val-online{% endif %}">
-                         {% if profile.is_online %}Online{% else %}Offline{% endif %}
+                     <div class="user-stat-val {% if player.is_online %}val-online{% endif %}">
+                         {% if player.is_online %}Online{% else %}Offline{% endif %}
                      </div>
                      <div class="user-stat-label">Status</div>
                  </div>

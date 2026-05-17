@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from apps.core.views import context_get
+from apps.core.views import get_user_profile
 from django.contrib.auth.decorators import login_required
 from apps.campaigns.models import Campaign
 from django.contrib.auth import login
@@ -8,42 +8,41 @@ from django.contrib import messages
 from django.db import models
 from django.db.models import Q
 
-# Create your views here.
 @login_required(login_url="login")
 def campaign_list_render(request):
-    user = request.user
-    # TODO: Remove campaign id from context getting in campaign_list
-    context = context_get(request, 'campaign_list', 0)
+    """
+    Get only the campaigns related to the user,
+    with prefetched data for (masters, players). 
+    """
+    profile = get_user_profile(request.user)
 
-    # Get only the campaigns related to the user, with prefetched data
-    # for faster iterations on masters and players info in the templates. 
     campaigns = Campaign.objects.filter(
-        models.Q(masters=user) | models.Q(players=user),
-        active=True
-        ).order_by('-created_at').prefetch_related('masters', 'players').distinct()
+        models.Q(masters=profile) | models.Q(players=profile),
+        active = True,
+        ).order_by('-created_at').prefetch_related('masters', 'players')
 
     return render(request, "campaign_list.html", {
-        'context': context,
+        'profile': profile,
         'campaigns': campaigns,
         })
 
 
 @login_required(login_url="login")
 def campaign_creator_render(request):
-    context = context_get(request, 'campaign_creator')
+    profile = get_user_profile(request.user)
+
     if request.method == 'POST':
         form = CampaignForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                campaign = form.save(commit=False)  # Doesn't save yet
                 # Set the current user as the only master
-                campaign.save()
-                campaign.masters.add(request.user)
+                campaign = form.save(commit=False)  # Doesn't save yet
+                campaign.masters.add(profile)
                 campaign.save()
             except Exception as e:
                 messages.error(request, f'Error creating campaign: {str(e)}')
                 return render(request, "campaign_creator.html", {
-                    'context': context,
+                    'profile': profile,
                     'new_campaign_form': form,
                     })
 
@@ -55,6 +54,6 @@ def campaign_creator_render(request):
         form = CampaignForm()
 
     return render(request, "campaign_creator.html", {
-        'context': context,
+        'profile': profile,
         'new_campaign_form': form,
         })

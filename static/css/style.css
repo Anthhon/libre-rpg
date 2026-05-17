@@ -6,6 +6,9 @@ TOKENS & THEMES
 ═══════════════════════════════════════ */
 :root {
     --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-big: 'Cinzel', serif;
+    --font-medium: 'Crimson Pro', serif;
+    --font-small: 'Jost', sans-serif;
 }
 
 [data-theme="dark"] {
@@ -87,9 +90,7 @@ body::before {
     opacity: 0.5;
 }
 
-/* ═══════════════════════════════════════
-SIDEBAR
-═══════════════════════════════════════ */
+/* SIDEBAR */
 .sidebar {
     width: var(--sidebar-w);
     min-height: 100vh;
@@ -97,10 +98,13 @@ SIDEBAR
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    position: relative;
     flex-shrink: 0;
     transition: width var(--transition), opacity var(--transition);
     overflow: hidden;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
     z-index: 100;
 }
 
@@ -170,21 +174,40 @@ SIDEBAR
     gap: 6px;
     font-family: "Jost", sans-serif;
     font-size: 10px;
-    color: #4caf82;
-    background: rgba(76,175,130,0.1);
-    border: 1px solid rgba(76,175,130,0.2);
     border-radius: 20px;
     padding: 3px 10px;
     margin-top: 10px;
     letter-spacing: 0.08em;
 }
 
-.session-badge::before {
+.session-online {
+    color: var(--green);
+    background: rgba(76,175,130,0.1);
+    border: 1px solid rgba(76,175,130,0.2);
+}
+
+.session-offline {
+    color: var(--error);
+    background: rgba(175,76,130,0.1);
+    border: 1px solid rgba(175,76,130,0.2);
+
+}
+
+.session-online::before {
     content: '';
     width: 6px; height: 6px;
     border-radius: 50%;
-    background: #4caf82;
-    box-shadow: 0 0 6px #4caf82;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s infinite;
+}
+
+.session-offline::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--error);
+    box-shadow: 0 0 6px var(--error);
     animation: pulse 2s infinite;
 }
 
@@ -453,7 +476,7 @@ CONTENT PANELS
 .panel {
     position: absolute;
     inset: 0;
-    opacity: 0;
+    opacity: 1;
     pointer-events: none;
     transform: translateY(8px);
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -626,12 +649,33 @@ PANEL: MESA
     line-height: 1.55;
 }
 
-/* Dice roll message */
 .msg-roll {
     background: var(--bg-raised);
     border: 1px solid var(--border);
     border-left: 3px solid var(--accent-gold);
     border-radius: 0 6px 6px 0;
+}
+
+.msg-tag {
+    margin-left:4px;
+    font-size:10px;
+    color:var(--accent-gold);
+    background:rgba(196,160,92,0.1);
+    border:1px solid rgba(196,160,92,0.2);
+    padding:1px 6px;
+    border-radius:4px;
+    font-family: var(--font-small);
+}
+
+.msg-tag-secret {
+    margin-left:4px;
+    font-size:10px;
+    color:var(--accent-ember);
+    background:rgba(212,104,58,0.1);
+    border:1px solid rgba(212,104,58,0.2);
+    padding:1px 6px;
+    border-radius:4px;
+    font-family: var(--font-small);
 }
 
 .roll-display {
@@ -961,7 +1005,7 @@ PANEL: FICHA
 }
 
 .pdf-toolbar-title {
-    font-family: 'Cinzel', serif;
+    font-family: var(--font-medium);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -980,7 +1024,7 @@ PANEL: FICHA
     gap: 7px;
     padding: 7px 14px;
     border-radius: 7px;
-    font-family: 'Cinzel', serif;
+    font-family: var(--font-medium);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -1017,13 +1061,7 @@ PANEL: FICHA
     display: flex;
     align-items: center;
     justify-content: center;
-    background: repeating-linear-gradient(
-    45deg,
-    var(--bg-void),
-    var(--bg-void) 10px,
-    var(--bg-deep) 10px,
-    var(--bg-deep) 20px
-    );
+    background: repeating-linear-gradient( 45deg, var(--bg-void), var(--bg-void) 10px, var(--bg-deep) 10px, var(--bg-deep) 20px);
 }
 
 .pdf-preview-inner {
@@ -1043,7 +1081,7 @@ PANEL: FICHA
 
 .pdf-preview-inner .icon { font-size: 48px; }
 .pdf-preview-inner p {
-    font-family: 'Cinzel', serif;
+    font-family: var(--font-medium);
     font-size: 13px;
     color: var(--text-muted);
     letter-spacing: 0.05em;
@@ -2013,7 +2051,8 @@ a.icon-btn[title="Sair"]:hover {
     border-radius: 20px;
     background: transparent;
     border: 1px solid var(--border);
-    font-family: 'Cinzel', serif;
+    font-family: var(--font-medium);
+    text-transform: uppercase;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.06em;

@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 
+{% block panel_name %}Ficha do personagem{% endblock %}
+{% block panel_desc %}Visualize todas as informações da ficha do seu personagem{% endblock %}
+
 {% block content %}
-{# ═══════════════ CHARACTER SHEET ═══════════════ #}
-<div class="panel active" id="panel-ficha">
+{# CHARACTER SHEET #}
+<div class="panel-active" id="panel-ficha">
     <div class="ficha-panel">
         <div class="config-header">
             <div class="panel-title">Ficha do Personagem</div>
-            <div class="panel-subtitle">D&D 5ª Edição — Visualização e exportação</div>
+            <div class="panel-subtitle">D&D 5ª Edição - Visualização e exportação</div>
         </div>
 
         <div class="char-hero">
@@ -17,7 +20,7 @@
             {% endif %}
             <div class="char-info">
                 {% if profile.nickname %}
-                <div class="char-name">{{ profile.nickname }}</div>
+                <div class="char-name">{{ profile.user.username }} - {{ profile.nickname }}</div>
                 {% else %}
                 <div class="char-name">{{ profile.user.username }}</div>
                 {% endif %}
@@ -68,13 +71,6 @@
 
         <div class="pdf-section">
             <div class="pdf-toolbar">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--accent-ember)">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10 9 9 9 8 9"/>
-                </svg>
                 <span class="pdf-toolbar-title">[[NOME DO ARQUIVO]].pdf</span>
                 <div class="pdf-actions">
                     <button class="btn btn-outline">
@@ -94,9 +90,10 @@
             </div>
             <div class="pdf-preview">
                 <div class="pdf-preview-inner">
-                    <div class="icon">📄</div>
-                    <p>Visualizador de PDF</p>
-                    <p style="font-size:11px; margin-top:4px; color:var(--text-muted);">O PDF da ficha será<br>renderizado aqui</p>
+                    <svg class="w-[48px] h-[48px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="var(--text-muted)" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m14-4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+                    </svg>
+                    <p>O PDF da ficha será<br>renderizado aqui</p>
                 </div>
             </div>
         </div>

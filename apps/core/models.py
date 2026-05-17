@@ -53,12 +53,14 @@ class Profile(models.Model):
             return f"{self.user.username} - {self.nickname}"
         return f"{self.user.username}"
 
+    @classmethod
+    def get_from(self, user):
+        """Return the profile for a given user, with the user data prefetched."""
+        return Profile.objects.select_related('user').get(user=user)
+
 
 # Auto create new 'Profile' instance when new user is created
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(
-                user=instance,
-                is_online=True
-                )
+        Profile.objects.create(user=instance, is_online=True)

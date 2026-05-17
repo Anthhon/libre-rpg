@@ -1,105 +1,18 @@
 {% extends "base.html" %}
 
+{% block panel_name %}Configurações{% endblock %}
+{% block panel_desc %}Personalize sua experiência na mesa{% endblock %}
+
 {% block content %}
-{# ═══════════════ CONFIGURATIONS ═══════════════ #}
-<div class="panel active" id="panel-config">
+<div class="panel-active" id="panel-config">
     <div class="config-panel">
+
+        {# Configurations header #}
         <div class="config-header">
             <div class="panel-title">Configurações</div>
-            <div class="panel-subtitle">Personalize sua experiência na mesa</div>
         </div>
 
-        {# Appearence options #}
-        <div class="config-section">
-            <div class="config-section-header">
-                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" style="color:var(--accent-arcane);">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9h.01M8.99 9H9m12 3a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM6.6 13a5.5 5.5 0 0 0 10.81 0H6.6Z"/>
-                </svg>
-                <span class="config-section-title">Aparência</span>
-                {# TODO: Implement buttons functions properly #}
-                <div class="config-desc">(NÃO IMPLEMENTADO)</div>
-            </div>
-
-            <div class="config-row">
-                <div class="config-info">
-                    <div class="config-label">Tema Escuro</div>
-                    <div class="config-desc">Ativar ou desativar o tema escuro.</div>
-                </div>
-                <div class="toggle-switch on" onclick=""></div>
-            </div>
-
-            <div class="config-row">
-                <div class="config-info">
-                    <div class="config-label">Cor de Destaque</div>
-                    <div class="config-desc">Tom primário da interface</div>
-                </div>
-                <div class="accent-options">
-                    <div class="accent-opt active" style="background:#c4a05c" title="Dourado"></div>
-                    <div class="accent-opt" style="background:#7c5cbf" title="Arcano"></div>
-                    <div class="accent-opt" style="background:#d4683a" title="Brasa"></div>
-                    <div class="accent-opt" style="background:#4a90a4" title="Gelo"></div>
-                    <div class="accent-opt" style="background:#4caf82" title="Esmeralda"></div>
-                </div>
-            </div>
-
-            <div class="config-row">
-                <div class="config-info">
-                    <div class="config-label">Tamanho da Fonte</div>
-                    <div class="config-desc">Tamanho do texto no chat</div>
-                </div>
-                <select class="config-select">
-                    <option>Pequeno</option>
-                    <option selected>Médio</option>
-                    <option>Grande</option>
-                </select>
-            </div>
-        </div>
-
-        {# Sessão #}
-        <div class="config-section">
-            <div class="config-section-header">
-                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" style="color:var(--accent-gold)">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M20 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6h-2m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4"/>
-                </svg>
-                <span class="config-section-title">Preferências</span>
-                {# TODO: Implement buttons functions properly #}
-                <div class="config-desc">(NÃO IMPLEMENTADO)</div>
-            </div>
-
-            <div class="config-row">
-                <div class="config-info">
-                    <div class="config-label">Notificações de Chat</div>
-                    <div class="config-desc">Alertas ao receber mensagens</div>
-                </div>
-                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
-            </div>
-
-            <div class="config-row">
-                <div class="config-info">
-                    <div class="config-label">Som de Dados</div>
-                    <div class="config-desc">Efeito sonoro ao rolar dados</div>
-                </div>
-                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
-            </div>
-
-            <div class="config-row">
-                <div class="config-info">
-                    <div class="config-label">Animações de Rolagem</div>
-                    <div class="config-desc">Animar os dados ao rolar</div>
-                </div>
-                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
-            </div>
-
-            <div class="config-row">
-                <div class="config-info">
-                    <div class="config-label">Mostrar timestamps</div>
-                    <div class="config-desc">Exibir horário em cada mensagem</div>
-                </div>
-                <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
-            </div>
-        </div>
-
-        {# Conexão #}
+        {# Connection info #}
         <div class="config-section">
             <div class="config-section-header">
                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" style="color:var(--accent-ice)">

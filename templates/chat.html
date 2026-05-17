@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 
+{% block panel_name %}Chat{% endblock %}
+{% block panel_desc %}Interaja com a mesa{% endblock %}
+
 {% block content %}
-{# ═══════════════ CHAT ═══════════════ #}
+{# CHAT #}
 <div class="chat-panel active">
     <div class="chat-header">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-gold)">
@@ -17,6 +20,7 @@
     <div class="chat-messages" id="chat-messages">
         {# Examples to each message type possible #}
 
+        {# TODO: Implement campaign session start/live button #}
         <div class="msg msg-system">
             <div class="msg-body">— [[HORÁRIO DE INÍCIO DA ÚLTIMA SESSÃO]] —</div>
         </div>
@@ -41,7 +45,7 @@
                 <span class="msg-author c-ember">{{ profile.user.username}}</span>
                 {% endif %}
                 <span class="msg-time">[[MESSAGE TIME]]</span>
-                <span style="margin-left:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent-gold); background:rgba(196,160,92,0.1); border:1px solid rgba(196,160,92,0.2); padding:1px 6px; border-radius:4px;">🎲 rolou dados</span>
+                <span class="msg-tag">rolou dados</span>
             </div>
             <div class="roll-display">
                 {# N = Number of times dice has been rolled #}
@@ -50,12 +54,13 @@
                 <span class="roll-notation">NdX+Y</span>
                 <span class="roll-arrow">→</span>
                 <div class="roll-dice">
-                    
                     {# DICE ROLL TOTAL#}
                     <div class="die max">17</div> {# Add 'max' in class to represent a critical roll#}
                 </div>
-                <span style="color:var(--text-muted); font-size:13px;">+5</span>
-                    {# DICE ROLL TOTAL WITH EXTRA SUM #}
+                {# DICE ROLL TOTAL WITH EXTRA SUM #}
+                <span style="color:var(--text-muted); font-size:13px;">
+                    +5
+                </span>
                 <span class="roll-total">22</span>
                 <span class="roll-label">[[ROLL LABEL/TYPE]]</span>
             </div>
@@ -65,7 +70,7 @@
             <div class="msg-header">
                 <span class="msg-author c-ember">[[USERNAME]]</span>
                 <span class="msg-time">[[MESSAGE TIME]]</span>
-                <span style="margin-left:4px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--accent-ember); background:rgba(212,104,58,0.1); border:1px solid rgba(212,104,58,0.2); padding:1px 6px; border-radius:4px;">🎲 rolou secretamente</span>
+                <span class="msg-tag-secret">rolou secretamente</span>
             </div>
             <div class="roll-display">
                 <span class="roll-notation" style="color:var(--accent-ember)">??? — Rolagem oculta</span>
@@ -74,7 +79,7 @@
 
     </div>
 
-    {# ═══════════════ FAST ROLL OPTIONS ═══════════════ #}
+    {# FAST ROLL OPTIONS #}
     <div class="chat-input-area">
         <div class="dice-quick">
             <span class="dice-chip" onclick="rollDice('d4')">d4</span>
