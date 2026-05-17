@@ -11,8 +11,9 @@ from django.db.models import Q
 # Create your views here.
 @login_required(login_url="login")
 def campaign_list_render(request):
-    context = context_get(request, 'campaign_list')
     user = request.user
+    # TODO: Remove campaign id from context getting in campaign_list
+    context = context_get(request, 'campaign_list', 0)
 
     # Get only the campaigns related to the user, with prefetched data
     # for faster iterations on masters and players info in the templates. 

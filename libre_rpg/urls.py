@@ -15,9 +15,9 @@ urlpatterns = [
     path('campaign/list/', campaign_list_render, name='campaign_list'),
     path('campaign/new/', campaign_creator_render, name='campaign_creator'),
 
-    path('chat/', views.chat_render, name='chat'),
-    path('char_sheet/', views.character_sheet_render, name='char_sheet'),
-    path('players/', views.players_list_render, name='players_list'),
+    path('campaign/<int:id>/chat/', views.chat_render, name='chat'),
+    path('campaign/<int:id>/char_sheet/', views.character_sheet_render, name='char_sheet'),
+    path('campaign/<int:id>/players/', views.players_list_render, name='players_list'),
 
-    path('config/', views.configurations_render, name='config'),
+    path('campaign/<int:id>/config/', views.configurations_render, name='config'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

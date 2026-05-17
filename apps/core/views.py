@@ -2,60 +2,12 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from apps.core.forms import LoginForm
-from apps.core.models import Profile
 from django.contrib.sessions.models import Session
 from django.utils import timezone
-
-
-# Variable 'page_name' is used by html django pre-processor
-# which uses this value passed into context, to generate dynamic 
-# sidebar buttons visuals when users change views
-def context_get(request, page_name):
-    user = request.user
-    user_profile = Profile.objects.filter(user=user).first()
-    users = Profile.objects.all()
-    users_online = Profile.objects.filter(is_online=True).count()
-
-    context = {
-            'profile': user_profile,
-            'users_count': users_online,
-            'page_name': page_name,
-            'users_list': users,
-            }
-    print(f'content: {context}')
-
-    return context
-
-
-@login_required(login_url="login")
-def configurations_render(request):
-    context = context_get(request, 'config')
-    return render(request, "configurations.html", context)
-
-
-@login_required(login_url="login")
-def chat_render(request):
-    context = context_get(request, 'chat')
-    return render(request, "chat.html", context)
-
-
-@login_required(login_url="login")
-def character_sheet_render(request):
-    context = context_get(request, 'char_sheet')
-    return render(request, "character_sheet.html", context)
-
-
-@login_required(login_url="login")
-def players_list_render(request):
-    context = context_get(request, 'players_list')
-    return render(request, "players_list.html", context)
-
-
-@login_required(login_url="login")
-def dashboard_render(request):
-    context = context_get(request, 'dashboard')
-    return render(request, "dashboard.html", context)
+from apps.core.forms import LoginForm
+from apps.core.models import Profile
+from apps.campaigns.models import Campaign
+from django.shortcuts import get_object_or_404
 
 
 def update_user_online_status(user, status):
@@ -68,6 +20,65 @@ def update_user_online_status(user, status):
         print("[ERROR] Could not find 'profile' related to 'user'")
 
 
+# TODO: Modulate context_get better since not all pages will want all this info
+# Variable 'page_name' is used by html django pre-processor
+# which uses this value passed into context, to generate dynamic 
+# sidebar buttons visuals when users change views
+def context_get(request, page_name, campaign_pk):
+    user = request.user
+    user_profile = Profile.objects.filter(user=user).first()
+
+    users = Profile.objects.all()
+    users_online = Profile.objects.filter(is_online=True).count()
+
+    if campaign_pk != 0:
+        campaign = get_object_or_404(Campaign, id=campaign_pk)
+    else:
+        campaign = None
+
+    context = {
+            'profile': user_profile,
+            'users_count': users_online,
+            'page_name': page_name,
+            'users_list': users,
+            'campaign': campaign,
+            }
+    print(f'content: {context}')
+
+    return context
+
+
+# FIXME: Configuration page not rendering correctly
+@login_required(login_url="login")
+def configurations_render(request, id):
+    context = context_get(request, 'config', id)
+    return render(request, "configurations.html", context)
+
+
+@login_required(login_url="login")
+def chat_render(request, id):
+    context = context_get(request, 'chat', id)
+    return render(request, "chat.html", context)
+
+
+@login_required(login_url="login")
+def character_sheet_render(request, id):
+    context = context_get(request, 'char_sheet', id)
+    return render(request, "character_sheet.html", context)
+
+
+@login_required(login_url="login")
+def players_list_render(request, id):
+    context = context_get(request, 'players_list', id)
+    return render(request, "players_list.html", context)
+
+
+@login_required(login_url="login")
+def dashboard_render(request, id):
+    context = context_get(request, 'dashboard', id)
+    return render(request, "dashboard.html", context)
+
+
 def logout_user(request):
     if request.user.is_authenticated:
         update_user_online_status(request.user, False)
@@ -77,7 +88,7 @@ def logout_user(request):
 
 def login_render(request):
     if request.user.is_authenticated:
-        return redirect('chat')
+        return redirect('campaign_list')
 
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)

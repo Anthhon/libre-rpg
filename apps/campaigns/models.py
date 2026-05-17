@@ -20,15 +20,14 @@ class Campaign(models.Model):
     name = models.CharField(
             max_length=32,
             blank=False,
-            null=True,
+            null=False,
             unique=True,
             verbose_name="Nome da campanha",
             )
     description = models.CharField(
-            max_length=128,
+            max_length=64,
             blank=True,  # Optional
             null=True,
-            unique=True,
             verbose_name="Descrição curta da campanha",
             )
     masters = models.ManyToManyField(
