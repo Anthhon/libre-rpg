@@ -7,19 +7,18 @@ class CampaignForm(forms.ModelForm):
         fields = ['name', 'description', 'cover_image']
         widgets = {
                 'cover_image': forms.ClearableFileInput(attrs={
-                    'class': 'cover-input',
                     'accept': 'image/*'
                     }),
                 'name': forms.TextInput(attrs={
-                    'class': 'field-input',
-                    'placeholder': 'A Maldição do Rei Morto...',
+                    'placeholder': 'Nome da campanha',
                     'maxlength': 32,
                     }),
                 'description': forms.Textarea(attrs={
-                    'class': 'field-textarea',
-                    'placeholder': 'Uma breve descrição da aventura...',
+                    'placeholder': 'Breve descrição da campanha...',
                     'maxlength': 128,
                     'rows': 3,
-                    'id': 'id_description',
                     }),
                 }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

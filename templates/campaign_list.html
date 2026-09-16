@@ -1,163 +1,80 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LIBRE RPG — Campanhas</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="bg-vignette"></div>
-    <div class="bg-lines"></div>
-    <div class="stars" id="stars"></div>
-    <div class="noise"></div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LIBRE RPG — Campanhas</title>
+        {# <link rel="stylesheet" href="{% static 'css/style.css' %}"> #}
+    </head>
+    <body>
+        <h1>Suas Campanhas</h1>
 
-    <div class="campaigns-wrap">
-
-        {# Page header #}
-        <header class="page-header">
-            <div class="page-header-eyebrow">Libre RPG — Mesa Virtual</div>
-            <h1 class="page-header-title">Suas <span>Campanhas</span></h1>
-            <p class="page-header-sub">Escolha uma aventura ou forje uma nova</p>
-            <div class="page-header-divider">
-                <div class="page-header-divider-line"></div>
-                <div class="page-header-divider-diamond"></div>
-                <div class="page-header-divider-line"></div>
-            </div>
-        </header>
-
-        {# Campaign grid — render only if campaigns exist #}
+        {# Campaign grid - render only if campaigns exist #}
         {% if campaigns %}
-        <div class="campaigns-grid">
+        <div>
             {% for campaign in campaigns %}
             {# TODO: Implement a campaign details window when user clicks the card #}
-            <a class="campaign-card" href="{% url 'players_list' campaign.pk %}">
+            {# TODO: Remove temporary style #}
+            {# Campaign body #}
+            <a href="{% url 'players_list' campaign.pk %}" style="display: flex; flex-direction: row; border: 1px solid black; padding: 1vw; gap: 1vw; align-items: center;">
                 {# Cover image #}
-                <div class="campaign-cover">
+                <div>
                     {% if campaign.cover_image %}
-                        <img
-                            class="campaign-cover-img"
-                            src="{{ campaign.cover_image.url }}"
-                            alt="Capa de {{ campaign.name }}"
-                        >
+                    <img src="{{ campaign.cover_image.url }}" alt="Capa de {{ campaign.name }}">
                     {% else %}
                     {# TODO: Find a good placeholder to fill the campaigns without cover #}
-                        <div class="campaign-cover-default">
-                            <svg class="campaign-cover-icon" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                                <path d="M2 17l10 5 10-5"/>
-                                <path d="M2 12l10 5 10-5"/>
-                            </svg>
-                        </div>
+                    <p>Imagem da campanha</p>
                     {% endif %}
                 </div>
 
-                {# Body #}
-                <div class="campaign-body">
-                    <div class="campaign-name">{{ campaign.name }}</div>
+                {# Campaign info #}
+                <p>{{ campaign.name }}</p>
+                {% if campaign.description %}
+                <small>
+                    <p>{{ campaign.description }}</p>
+                </small>
+                {% else %}
+                <small>
+                    <p>Sem descrição</p>
+                </small>
+                {% endif %}
 
-                    {% if campaign.description %}
-                        <div class="campaign-desc">{{ campaign.description }}</div>
-                    {% else %}
-                        <div class="campaign-desc empty">Sem descrição</div>
-                    {% endif %}
-
-                    {# Footer: first master + enter arrow #}
-                    <div class="campaign-footer">
-                        {% with first_master=campaign.masters.first %}
-                        {% if first_master %}
-                            <div class="campaign-master-avatar">
-                                {% if first_master.profile.avatar %}
-                                    <img src="{{ first_master.profile.avatar.url }}" alt="{{ first_master.username }}">
-                                {% else %}
-                                    {{ first_master.username|first|upper }}
-                                {% endif %}
-                            </div>
-                            <div class="campaign-master-info">
-                                <div class="campaign-master-label">Mestre</div>
-                                <div class="campaign-master-name">{{ first_master.username }}</div>
-                            </div>
-                        {% else %}
-                            <div class="campaign-master-info">
-                                <div class="campaign-master-label">Sem mestre</div>
-                            </div>
+                {# Campaign details #}
+                <div>
+                    {# TODO: Add a profile pic dot to each master (capped at N) #}
+                    {% with first_master=campaign.masters.first %}
+                    {% if first_master %}
+                    <div>
+                        {% if first_master.profile.avatar %} {# Tries to render master profile picture #}
+                        {# TODO: Check why profile_picture isn't being rendered correctly, too lazy to do it now #}
+                        <img src="{{ first_master.profile_picture.url }}" alt="{{ first_master.username }}">
+                        {% else %} {# Render the first letter of master as his picture in case of None #}
+                        {{ first_master.user.username|first|upper }}
                         {% endif %}
-                        {% endwith %}
                     </div>
+                    <div>{{ first_master.user.username }}</div>
+                    {% else %}
+                    <div>
+                        <div>Sem mestre</div>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
                 </div>
             </a>
             {% endfor %}
         </div>
-        {% else %}
-        {# Empty state when no campaigns exist #}
-        <div class="campaigns-empty">
-            <div class="campaigns-empty-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                    <path d="M2 17l10 5 10-5"/>
-                    <path d="M2 12l10 5 10-5"/>
-                </svg>
-            </div>
-            <div class="campaigns-empty-title">Nenhuma campanha encontrada</div>
-            <div class="campaigns-empty-sub">Seja o primeiro a abrir um livro de aventuras</div>
+        {% else %} {# When no campaigns exist #}
+        <div>
+            <h4>Nenhuma campanha encontrada</h4>
+            <p>Seja o primeiro a abrir um livro de aventuras</p>
         </div>
         {% endif %}
 
-        {# Create section — always shown #}
-        <div class="create-section">
-            <div class="create-section-header">
-                <div class="create-section-line"></div>
-                <div class="create-section-diamond"></div>
-                <span class="create-section-label">Nova Aventura</span>
-                <div class="create-section-diamond"></div>
-                <div class="create-section-line"></div>
-            </div>
+        {# Create new campaign #}
+        <h1>Nova Aventura</h1>
+        <a href="{% url 'campaign_creator' %}">Criar Campanha</a>
 
-            <a class="create-card" href="{% url 'campaign_creator' %}">
-                <div class="create-card-icon">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="16"/>
-                        <line x1="8" y1="12" x2="16" y2="12"/>
-                    </svg>
-                </div>
-                <div class="create-card-body">
-                    <div class="create-card-title">Criar Campanha</div>
-                    <div class="create-card-desc">
-                        Abra as portas para uma nova saga. Defina o cenário, convide companheiros e dê vida à sua história.
-                    </div>
-                </div>
-            </a>
-        </div>
-
-    </div>{# /campaigns-wrap #}
-
-    <script src="{% static 'js/script.js' %}"></script>
-    <script>
-        (function generateStars() {
-            const container = document.getElementById('stars');
-            const configs = [
-                { count: 40, minSize: 1, maxSize: 1.5, minOp: 0.03, maxOp: 0.2, minDur: 3, maxDur: 6 },
-                { count: 20, minSize: 1.5, maxSize: 2.5, minOp: 0.05, maxOp: 0.35, minDur: 4, maxDur: 8 },
-                { count: 8,  minSize: 2,   maxSize: 3.5, minOp: 0.08, maxOp: 0.5,  minDur: 5, maxDur: 10 },
-            ];
-            configs.forEach(({ count, minSize, maxSize, minOp, maxOp, minDur, maxDur }) => {
-                for (let i = 0; i < count; i++) {
-                    const s = document.createElement('div');
-                    s.className = 'star';
-                    const size = minSize + Math.random() * (maxSize - minSize);
-                    s.style.cssText = `
-                        width:${size}px; height:${size}px;
-                        left:${Math.random()*100}%; top:${Math.random()*100}%;
-                        --min-op:${minOp}; --max-op:${maxOp};
-                        --dur:${(minDur + Math.random()*(maxDur-minDur)).toFixed(1)}s;
-                        --delay:-${(Math.random()*maxDur).toFixed(1)}s;
-                    `;
-                    container.appendChild(s);
-                }
-            });
-        })();
-    </script>
-</body>
+        <script src="{% static 'js/script.js' %}"></script>
+    </body>
 </html>

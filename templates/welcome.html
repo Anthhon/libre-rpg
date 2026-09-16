@@ -5,144 +5,27 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>LIBRE RPG — Bem-vindo</title>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        {# <link rel="stylesheet" href="{% static 'css/style.css' %}"> #}
     </head>
     <body>
-        {# Camadas de fundo #}
-        <div class="bg-vignette"></div>
-        <div class="bg-lines"></div>
-        <div class="stars" id="stars"></div>
-        <div class="noise"></div>
+        {# Cabeçalho do formulário de login #}
+        <h1>Libre RPG</div>
+        <h2>Login do sistema</span>
 
-        {# Card principal #}
-        <div class="login-card-wrap">
-            <div class="login-card">
+        {# Login form #}
+        <form id="welcome-form" method="post" novalidate>
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" id="submit-btn">Entrar na Mesa</button>
+        </form>
 
-                {# Ornamento e logo #}
-                <div class="ornament">
-                    <div class="logo-text">Libre RPG</div>
-                    <div class="logo-sub">Mesa Virtual de Aventuras</div>
-                </div>
-
-                {# Divisor #}
-                <div class="divider-ornament">
-                    <div class="divider-line"></div>
-                    <div class="divider-diamond"></div>
-                    <span class="welcome-text">Login</span>
-                    <div class="divider-diamond"></div>
-                    <div class="divider-line"></div>
-                </div>
-
-                {# Conteúdo do formulário #}
-                <div class="form-content" id="form-content">
-                    <form class="form" id="welcome-form" method="post" novalidate>
-                        {% csrf_token %}
-
-                        {# Nome #}
-                        <div class="field" id="field-name">
-                            <div class="field-label">
-                                <span class="label-text">Nome</span>
-                            </div>
-                            <div class="input-wrap">
-                                <svg class="w-6 h-6 text-gray-800 dark:text-white input-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-width="2" d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-                                </svg>
-                                {{ form.username }}
-                            </div>
-                            <div class="field-hint" id="hint-name">Como você será chamado na mesa</div>
-                        </div>
-
-                        {# Senha #}
-                        <div class="field" id="field-password">
-                            <div class="field-label">
-                                <span class="label-text">Senha</span>
-                            </div>
-                            <div class="input-wrap">
-                                <svg class="w-6 h-6 text-gray-800 dark:text-white input-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
-                                </svg>
-                                {{ form.password }}
-                                <button type="button" class="password-toggle" id="password-toggle" onclick="togglePassword()" title="Mostrar/ocultar senha">
-                                    <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                        <circle cx="12" cy="12" r="3"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="field-hint" id="hint-password">Digite sua senha para acessar o sistema</div>
-                        </div>
-
-                        {# Botão #}
-                        <div class="submit-wrap">
-                            <button type="submit" class="submit-btn" id="submit-btn">
-                                <span class="submit-text">Entrar na Mesa</span>
-                                <svg class="submit-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                    <polyline points="12 5 19 12 12 19"/>
-                                </svg>
-                            </button>
-                        </div>
-
-                    </form>
-                </div>
-
-                {# Tela de sucesso #}
-                <div class="success-screen" id="success-screen">
-                    <div class="success-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                    </div>
-                    <div class="success-name" id="success-name"></div>
-                    <div class="success-msg" id="success-msg"></div>
-                    <div class="success-redirect">
-                        Redirecionando para a mesa...
-                        <div class="redirect-bar">
-                            <div class="redirect-fill"></div>
-                        </div>
-                    </div>
-                </div>
-
-                {# Footer #}
-                <div class="card-footer">
-                    <div class="footer-line">
-                        <div class="footer-diamond"></div>
-                        <span class="footer-text">Livre · Gratuito · Open Source</span>
-                        <div class="footer-diamond"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {# Footer #}
+        <footer>
+            <small>
+                <p>Sistema FOSS de TTRPG</p>
+            </small>
+        </footer>
 
         <script src="{% static 'js/script.js'%}"></script>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-        <script>
-            // Generate stars VFX in login form
-            (function generateStars() {
-                const container = document.getElementById('stars');
-                const configs = [
-                    { count: 40, minSize: 1, maxSize: 1.5, minOp: 0.03, maxOp: 0.2, minDur: 3, maxDur: 6 },
-                    { count: 20, minSize: 1.5, maxSize: 2.5, minOp: 0.05, maxOp: 0.35, minDur: 4, maxDur: 8 },
-                    { count: 8,  minSize: 2,   maxSize: 3.5, minOp: 0.08, maxOp: 0.5,  minDur: 5, maxDur: 10 },
-                ];
-                configs.forEach(({ count, minSize, maxSize, minOp, maxOp, minDur, maxDur }) => {
-                    for (let i = 0; i < count; i++) {
-                        const s = document.createElement('div');
-                        s.className = 'star';
-                        const size = minSize + Math.random() * (maxSize - minSize);
-                        s.style.cssText = `
-            width:${size}px; height:${size}px;
-            left:${Math.random()*100}%; top:${Math.random()*100}%;
-            --min-op:${minOp}; --max-op:${maxOp};
-            --dur:${(minDur + Math.random()*(maxDur-minDur)).toFixed(1)}s;
-            --delay:-${(Math.random()*maxDur).toFixed(1)}s;
-          `;
-                        container.appendChild(s);
-                    }
-                });
-            })();
-        </script>
     </body>
 </html>

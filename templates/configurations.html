@@ -1,42 +1,25 @@
 {% extends "base.html" %}
 
 {% block panel_name %}Configurações{% endblock %}
-{% block panel_desc %}Personalize sua experiência na mesa{% endblock %}
+{% block panel_desc %}Preferências do usuário e informações do sistema{% endblock %}
 
 {% block content %}
-<div class="panel-active" id="panel-config">
-    <div class="config-panel">
-
-        {# Configurations header #}
-        <div class="config-header">
-            <div class="panel-title">Configurações</div>
-        </div>
-
-        {# Connection info #}
-        <div class="config-section">
-            <div class="config-section-header">
-                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" style="color:var(--accent-ice)">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1M5 12h14M5 12a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1m-2 3h.01M14 15h.01M17 9h.01M14 9h.01"/>
-                </svg>
-                <span class="config-section-title">Conexão</span>
-                {# TODO: Implement buttons functions properly #}
-                <div class="config-desc">(NÃO IMPLEMENTADO)</div>
-            </div>
-
-            <div class="config-row">
-                <div class="config-info">
-                    <div class="config-label">Endereço Global do Servidor</div>
-                    <div class="config-desc">IP do mestre para esta sessão</div>
+<div>
+    <div>
+        {# TODO: Implement info gathering properly #}
+        {# Connection section #}
+        <div>
+            <h2>Conexão</h2>
+            <div>
+                <div>
+                    <p><b>Endereço global do servidor</b> - IP global do mestre para esta sessão</p>
+                    <p>XXX.XXX.XXX.XXX:PPPP</p>
                 </div>
-                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent-ice);">XXX.XXX.XXX.XXX:PPPP</span>
-            </div>
 
-            <div class="config-row">
-                <div class="config-info">
-                    <div class="config-label">Endereço Local do Servidor</div>
-                    <div class="config-desc">IP desta máquina na sessão</div>
+                <div>
+                    <p><b>Endereço local do servidor</b> - IP do mestre para sessão em rede local</p>
+                    <p>XXX.XXX.XXX.XXX:PPPP</p>
                 </div>
-                <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent-ice);">XXX.XXX.XXX.XXX:PPPP</span>
             </div>
         </div>
     </div>

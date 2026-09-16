@@ -44,12 +44,12 @@ function applyFilters(query, role) {
     let visible = 0;
 
     cards.forEach(card => {
-        const name    = card.dataset.name   || '';
-        const cardRole= card.dataset.role   || '';
-        const online  = card.dataset.online === 'true';
+        const name = card.dataset.name   || '';
+        const cardRole = card.dataset.role   || '';
+        const online = card.dataset.online === 'true';
 
-        const matchQuery  = !query  || name.includes(query);
-        const matchRole   = role === 'all'
+        const matchQuery = !query  || name.includes(query);
+        const matchRole = role === 'all'
             || role === 'online'  && online
             || role === cardRole;
 
