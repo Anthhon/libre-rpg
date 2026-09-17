@@ -13,7 +13,6 @@ Nosso objetivo é fornecer um conjunto eficiente e acessível de ferramentas par
 - [ ] Visualização e edição de fichas de personagem
     - [ ] Visualização rápida do PDF da ficha
     - [ ] Exibição rápida de informações da ficha
-    - [ ] 
 - [ ] Visualizador de mapas da campanha
     - [ ] Visualização dinâmica do mapa da campanha
     - [ ] Movimentação de personagens no mapa (pelo mestre)
