@@ -3,7 +3,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
+from django.contrib import messages
 from django.utils import timezone
+from apps.campaigns.forms import CampaignAddPlayerForm
 from apps.core.forms import LoginForm
 from apps.core.models import Profile
 from apps.campaigns.models import Campaign
@@ -91,6 +93,13 @@ def players_list_render(request, id):
     profile = get_user_profile(request.user)
     campaign = get_campaign(campaign_id=id)
 
+    # Add player to campaign through form
+    campaign_player_add_form = CampaignAddPlayerForm(request.POST or None, campaign=campaign)
+    if request.method == 'POST' and campaign_player_add_form.is_valid():
+        players = campaign_player_add_form.save()
+        messages.success(request, f"{len(players)} jogador(es) adicionado(s) a campanha.")
+        return redirect('players_list', id=id)
+
     # Get all the current participants of the current campaign 
     # with a 'is_master' flag to identify masters
     masters_qs = campaign.masters.all()
@@ -106,6 +115,7 @@ def players_list_render(request, id):
         'campaign': campaign,
         'players_list': players_list,
         'page_name': get_page_name(request),
+        'campaign_player_add_form': campaign_player_add_form,
         })
 
 

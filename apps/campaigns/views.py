@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from apps.core.views import get_user_profile
 from django.contrib.auth.decorators import login_required
 from apps.campaigns.models import Campaign
@@ -7,6 +7,7 @@ from apps.campaigns.forms import CampaignForm
 from django.contrib import messages
 from django.db import models
 from django.db.models import Q
+from django.views.decorators.http import require_POST
 
 @login_required(login_url="login")
 def campaign_list_render(request):
@@ -40,16 +41,16 @@ def campaign_creator_render(request):
                 campaign.masters.add(profile)
                 campaign.save()
             except Exception as e:
-                messages.error(request, f'Error creating campaign: {str(e)}')
+                messages.error(request, f'Erro ao tentar criar a campanha: {str(e)}')
                 return render(request, "campaign_creator.html", {
                     'profile': profile,
                     'new_campaign_form': form,
                     })
 
-            messages.success(request, f'Campaign {campaign.name} created successfully!')
+            messages.success(request, f'Campanha \'{campaign.name}\' criada com sucesso!')
             return redirect('campaign_list')
         else:
-            messages.error(request, f'Please correct the errors below.')
+            messages.error(request, f'Por favor corrija os erros abaixo.')
     else:
         form = CampaignForm()
 
@@ -57,3 +58,26 @@ def campaign_creator_render(request):
         'profile': profile,
         'new_campaign_form': form,
         })
+
+
+@login_required(login_url="login")
+def campaign_player_remove(request, campaign_id, player_id):
+    """Remove player with given ID from campaign"""
+    profile = get_user_profile(request.user)
+    campaign = get_object_or_404(Campaign, pk=campaign_id)
+    
+    # Only masters can remove players
+    if not campaign.masters.filter(pk=profile.pk).exists():
+        messages.error(request, 'Somente os mestres de uma campanha podem remover jogadores.')
+        return redirect('players_list', campaign.pk)
+
+    # Player must belong to this campaign
+    player = campaign.players.filter(pk=player_id).first()
+    if player is None:
+        messages.error(request, 'Jogador não encontrado nesta campanha.')
+        return redirect('players_list', campaign.pk)
+    
+    # Remove o jogador da campanha
+    campaign.players.remove(player)
+    messages.success(request, f'{player} removido da campanha.')
+    return redirect('players_list', campaign.pk)

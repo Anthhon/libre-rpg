@@ -13,7 +13,7 @@
         <h2>Login do sistema</span>
 
         {# Login form #}
-        <form id="welcome-form" method="post" novalidate>
+        <form method="post" novalidate>
             {% csrf_token %}
             {{ form }}
             <button type="submit" id="submit-btn">Entrar na Mesa</button>

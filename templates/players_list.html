@@ -6,37 +6,40 @@
 
 {% block content %}
 <div style="display: flex; flex-direction: column; gap: 4vh; padding: 4vh 0;">
-    {# Header #}
-    <div style="display: flex; flex-direction: row; gap: 2vw;">
-        <div>Pesquise por jogadores ({{ players_list|length }}</span> / {{ players_list|length }})</div>
-        <input type="text"
-               id="userlist-search"
-               placeholder="Buscar aventureiro..."
-               oninput="filterUsers(this.value)"
-               autocomplete="off"
-               />
-    </div>
-
-    {# Filter tabs #}
     <div>
-        {# TODO: Re-implement query filtering #}
-        <button onclick="setFilter('all', this)">Limpar filtros</button>
-        {# TODO: Implement filters by masters/players #}
-        {% comment %}
-        <button class="filter-tab" onclick="setFilter('master', this)">
-            Mestres
-            <span class="filter-count">{{ masters_count|default:"0" }}</span>
-        </button>
-        <button class="filter-tab" onclick="setFilter('player', this)">
-            Jogadores
-            <span class="filter-count">{{ players_count|default:"0" }}</span>
-        </button>
-        {% endcomment %}
-        <button onclick="setFilter('online', this)">Jogadores Online</button>
+        {# Header #}
+        <div style="display: flex; flex-direction: row; gap: 2vw;">
+            <div>Pesquise por jogadores ({{ players_list|length }}</span> / {{ players_list|length }})</div>
+            <input type="text"
+                   id="userlist-search"
+                   placeholder="Buscar aventureiro..."
+                   oninput="filterUsers(this.value)"
+                   autocomplete="off"
+                   />
+        </div>
+
+        {# Filter tabs #}
+        <div>
+            {# TODO: Re-implement query filtering #}
+            <button onclick="setFilter('all', this)">Limpar filtros</button>
+            {# TODO: Implement filters by masters/players #}
+            {% comment %}
+            <button class="filter-tab" onclick="setFilter('master', this)">
+                Mestres
+                <span class="filter-count">{{ masters_count|default:"0" }}</span>
+            </button>
+            <button class="filter-tab" onclick="setFilter('player', this)">
+                Jogadores
+                <span class="filter-count">{{ players_count|default:"0" }}</span>
+            </button>
+            {% endcomment %}
+            <button onclick="setFilter('online', this)">Jogadores Online</button>
+        </div>
     </div>
 
     {# Players grid #}
     <div>
+        <h2>Lista de jogadores</h2>
         {# Generate each player card #}
         {% for player, is_master in players_list %}
         <div data-name="{{ player.user.username|lower }} {{ player.nickname|lower|default:'' }}"
@@ -68,18 +71,36 @@
                 {# Render player status #}
                 <p>{% if is_master %}Master{% else %}Player{% endif %}</p>
                 <p>*{% if player.is_online %}Online{% else %}Offline{% endif %}*</p>
+
+                {# Render player related actions if they are not the user itself #}
+                {% if not player.user == user %}
+                <a href="{% url 'player_remove' campaign.id player.id %}">Remover da campanha</a>
+                {% endif %}
             </div>
         </div>
         {% empty %}
         <div>Nenhum jogador encontrado</div>
         {% endfor %}
-
     </div>
 
     {# TODO: Invalid query should output this #}
     {# Empty search state (hidden by default) #}
     <div style="display:none;">
         <div>Nenhum resultado para a sua pesquisa...</div>
+    </div>
+
+    <div>
+        <h2>Adicionar jogadores</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ campaign_player_add_form.players.errors }}
+            {% for checkbox in campaign_player_add_form.players %}
+            <label>{{ checkbox.tag }} {{ checkbox.choice_label }}</label><br>
+            {% empty %}
+            <p>Não é possível adicionar nenhum outro jogador a campanha.</p>
+            {% endfor %}
+            <button type="submit">Adicionar jogadores</button>
+        </form>
     </div>
 
 </div>

@@ -11,7 +11,7 @@
         <a href="{% url 'campaign_list' %}">Voltar às campanhas</a>
         <h1>Nova Campanha</h1>
 
-        <form class="form" method="post" enctype="multipart/form-data" novalidate>
+        <form method="post" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
             {{ new_campaign_form }}
         </form>
